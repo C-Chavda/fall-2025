@@ -58,21 +58,15 @@
 //#include <stdint.h>    //Library not used
 //#include <ctime>
 //#include <cstring>
-#include <iostream>
-using namespace std;
 
-extern "C" double floating_point_io();
+extern double triangle();
 
 int main(){
 
   double mystery_number = -0.00000000000000099;
-  cout << "Welcome to Basic Float Operations" << endl;
+  mystery_number = triangle();
   printf("The initial value of the mystery number is %1.16lf\n",mystery_number);
-  mystery_number = floating_point_io();
-  printf("%s%1.18lf%s\n","The driver received return code ",mystery_number,
-         ".  The driver will now return 0 to the OS.  Bye.");
-  cout << "The driver received code number " << mystery_number << " and will now return 0 to the OS." << endl;
-
+  
 
   return 0;
 

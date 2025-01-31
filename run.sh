@@ -10,13 +10,13 @@ rm *.out
 echo "This is program <Demonstrate Numeric IO>"
 
 echo "Assemble the module fp-io.asm"
-nasm -f elf64 -l fp-io.lis -o fp-io.o fp-io.asm
+nasm -f elf64 -l triangle.lis -o triangle.o triangle.asm
 
-echo "Compile the C++ module fp-io-driver.cpp"
-g++ -c -m64 -Wall -o fp-io-driver.o fp-io-driver.cpp -fno-pie -no-pie -std=c++17
+echo "Compile the C module fp-io-driver.cpp"
+gcc -c -m64 -Wall -o file1.o geometry.c -fno-pie -no-pie -std=c++17
 
 echo "Link the two object files already created"
-g++ -m64 -o fpio.out fp-io-driver.o fp-io.o -fno-pie -no-pie -std=c++17 -z noexecstack
+gcc -m64 -o fpio.out file1.o triangle.o -fno-pie -no-pie -std=c++17 -z noexecstack
 
 echo "Run the program Basic Float Operations"
 ./fpio.out
