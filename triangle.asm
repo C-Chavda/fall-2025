@@ -45,6 +45,10 @@
 
 ;===== Begin code area ========================================================================================================
 
+extern fgets
+
+extern stdin
+
 extern printf                                               ;External C++ function for writing to standard output device
 
 extern scanf                                                ;External C++ function for reading from the standard input device
@@ -52,7 +56,7 @@ extern scanf                                                ;External C++ functi
 global triangle                                    ;This makes floating_point_io callable by functions outside of this file.
 
 segment .data                                               ;Place initialized data here
-
+place_holder  dq 22.0
 
 segment .bss                                                ;Place un-initialized data here.
 
@@ -86,6 +90,7 @@ pushf                                                       ;Back up rflags
 
 
 
+movsd xmm0, [place_holder]
 ;Restore the original values to the GPRs
 popf                                                        ;Restore rflags
 pop        r15                                              ;Restore r15
