@@ -1,0 +1,294 @@
+     1                                  ;****************************************************************************************************************************
+     2                                  ;Program name: "Triangle".  This program calculates the average driving speed and time it took to go a certain distance based on user input
+     3                                  ; Copyright (C) 2024  Nicholas Perez.          *
+     4                                  ;                                                                                                                           *
+     5                                  ;This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License  *
+     6                                  ;version 3 as published by the Free Software Foundation.  This program is distributed in the hope that it will be useful,   *
+     7                                  ;but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See   *
+     8                                  ;the GNU General Public License for more details A copy of the GNU General Public License v3 is available here:             *
+     9                                  ;<https://www.gnu.org/licenses/>.                                                                                           *
+    10                                  ;****************************************************************************************************************************
+    11                                  
+    12                                  
+    13                                  
+    14                                  
+    15                                  ;========1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
+    16                                  ;Author information
+    17                                  ;  Author name: Nicholas Perez
+    18                                  ;  Author email: NicholasPerez8@csu.fullerton.edu
+    19                                  ;  CWID: 886730910
+    20                                  ;  Class: 240-03 Section 03
+    21                                  ;
+    22                                  ;Program information
+    23                                  ;  Program name: Triangle
+    24                                  ;  Programming languages: One module in C, one in X86, and one in bash.
+    25                                  ;  Date program began: 2024-Jan-30
+    26                                  ;  Date of last update: 2024-Feb-4
+    27                                  ;  Files in this program: geometry.c, triangle.asm, r.sh.
+    28                                  ;  Testing: Alpha testing completed.  All functions are correct.
+    29                                  ;  Status: Ready for release to customers
+    30                                  ;
+    31                                  ;Purpose
+    32                                  ;  This program is a driving time, speed, and distance calculator based on the user's input
+    33                                  ;
+    34                                  ;This file:
+    35                                  ;  File name: average.asm
+    36                                  ;  Language: X86-64
+    37                                  ;  Max page width: 124 columns
+    38                                  ;  Assemble (standard): nasm -f elf64 -l avg.lis -o avg.o average.asm
+    39                                  ;  Assemble (debug): nasm -f elf64 -gdwarf -l avg.lis -o avg.o average.asm
+    40                                  ;  Optimal print specification: Landscape, 7 points, monospace, 8½x11 paper
+    41                                  ;  Prototype of this function: unsigned long helloword();
+    42                                  ; 
+    43                                  ;
+    44                                  ;
+    45                                  ;
+    46                                  ;========1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
+    47                                  
+    48                                  ;declarations
+    49                                  extern printf
+    50                                  extern scanf
+    51                                  extern fgets
+    52                                  extern stdin
+    53                                  extern strlen
+    54                                  extern cos
+    55                                  global triangle
+    56                                  string_size equ 48
+    57                                  
+    58                                  
+    59                                  segment .data
+    60                                  ;declare initialized arrays
+    61                                  
+    62 00000000 57656C636F6D652074-     program_greeting db "Welcome to the triangle program maintained by Nicholas Perez.", 0
+    62 00000009 6F2074686520747269-
+    62 00000012 616E676C652070726F-
+    62 0000001B 6772616D206D61696E-
+    62 00000024 7461696E6564206279-
+    62 0000002D 204E6963686F6C6173-
+    62 00000036 20506572657A2E00   
+    63 0000003E 0A506C656173652065-     prompt_person_title db 10, "Please enter your title (Mr, Mrs, Nurse, Aunt, etc.): ",0
+    63 00000047 6E74657220796F7572-
+    63 00000050 207469746C6520284D-
+    63 00000059 722C204D72732C204E-
+    63 00000062 757273652C2041756E-
+    63 0000006B 742C206574632E293A-
+    63 00000074 2000               
+    64 00000076 0A506C656173652065-     prompt_name db 10, "Please enter your name: ", 0
+    64 0000007F 6E74657220796F7572-
+    64 00000088 206E616D653A2000   
+    65 00000090 256C6620256C6600        side_input_format db "%lf %lf", 0
+    66 00000098 0A506C656173652065-     prompt_sides db 10, "Please enter two side lenghts seperated by WS: ", 0
+    66 000000A1 6E7465722074776F20-
+    66 000000AA 73696465206C656E67-
+    66 000000B3 687473207365706572-
+    66 000000BC 617465642062792057-
+    66 000000C5 533A2000           
+    67 000000C9 256C6600                degree_input_format db "%lf", 0
+    68 000000CD 0A506C656173652065-     prompt_degree db 10, "Please enter your angle in degrees: ", 0
+    68 000000D6 6E74657220796F7572-
+    68 000000DF 20616E676C6520696E-
+    68 000000E8 20646567726565733A-
+    68 000000F1 2000               
+    69 000000F3 0A54686520636F6D70-     third_side_format db 10, "The computed third length is: %lf ", 0
+    69 000000FC 757465642074686972-
+    69 00000105 64206C656E67746820-
+    69 0000010E 69733A20256C662000 
+    70 00000117 182D4454FB210940        pi dq 3.141592653589793
+    71 0000011F 0000000000000040        two dq 2.0
+    72 00000127 0000000000806640        one_eighty dq 180.0
+    73 0000012F 0A706C656173652065-     goodbye db 10, "please enjoy your triangles %s %s", 0
+    73 00000138 6E6A6F7920796F7572-
+    73 00000141 20747269616E676C65-
+    73 0000014A 7320257320257300   
+    74                                  
+    75                                  segment .bss
+    76                                  ;declare empty arrays
+    77 00000000 <res 0000001E>          name resb 30
+    78 0000001E <res 0000000F>          person_title resb 15
+    79 0000002D <res 00000008>          side_one resq 1
+    80 00000035 <res 00000008>          side_two resq 1
+    81 0000003D <res 00000008>          degree resq 1
+    82 00000045 <res 00000008>          cos_theta resq 1
+    83 0000004D <res 00000008>          third_side resq 1
+    84                                  
+    85                                  
+    86                                  segment .text
+    87                                  triangle:
+    88                                  
+    89                                  ;backup GPRs
+    90 00000000 55                      push rbp
+    91 00000001 4889E5                  mov rbp, rsp
+    92 00000004 53                      push rbx
+    93 00000005 51                      push rcx
+    94 00000006 52                      push rdx
+    95 00000007 57                      push rdi
+    96 00000008 56                      push rsi
+    97 00000009 4150                    push r8
+    98 0000000B 4151                    push r9
+    99 0000000D 4152                    push r10
+   100 0000000F 4153                    push r11
+   101 00000011 4154                    push r12
+   102 00000013 4155                    push r13
+   103 00000015 4156                    push r14
+   104 00000017 4157                    push r15
+   105 00000019 9C                      pushf
+   106                                  
+   107                                  ;Prints greeting to user
+   108 0000001A B800000000              mov rax, 0
+   109 0000001F 48BF-                   mov rdi, program_greeting
+   109 00000021 [0000000000000000] 
+   110 00000029 E8(00000000)            call printf
+   111                                  
+   112                                  ;Prompts user for their name
+   113 0000002E B800000000              mov rax, 0
+   114 00000033 48BF-                   mov rdi, prompt_name
+   114 00000035 [7600000000000000] 
+   115 0000003D E8(00000000)            call printf
+   116                                  
+   117                                  ;Keyboard input from the user
+   118 00000042 B800000000              mov rax, 0
+   119 00000047 48BF-                   mov rdi, name
+   119 00000049 [0000000000000000] 
+   120 00000051 BE14000000              mov rsi, 20     
+   121 00000056 488B1425[00000000]      mov rdx, [stdin]
+   122 0000005E E8(00000000)            call fgets
+   123                                  
+   124                                  ;checks string length and removes null character
+   125 00000063 B800000000              mov rax, 0
+   126 00000068 48BF-                   mov rdi, name
+   126 0000006A [0000000000000000] 
+   127 00000072 E8(00000000)            call strlen
+   128 00000077 C680[FFFFFFFF]00        mov [name+rax-1], byte 0
+   129                                  
+   130                                  ;prompts the user to input their title
+   131 0000007E B800000000              mov rax, 0
+   132 00000083 48BF-                   mov rdi, prompt_person_title
+   132 00000085 [3E00000000000000] 
+   133 0000008D E8(00000000)            call printf
+   134                                  
+   135                                  ;keyboard intput from user
+   136 00000092 B800000000              mov rax, 0
+   137 00000097 48BF-                   mov rdi, person_title
+   137 00000099 [1E00000000000000] 
+   138 000000A1 BE0F000000              mov rsi, 15
+   139 000000A6 488B1425[00000000]      mov rdx, [stdin]
+   140 000000AE E8(00000000)            call fgets
+   141                                  
+   142                                  ;checks string length and removes null character
+   143 000000B3 B800000000              mov rax, 0
+   144 000000B8 48BF-                   mov rdi, person_title
+   144 000000BA [1E00000000000000] 
+   145 000000C2 E8(00000000)            call strlen
+   146 000000C7 C680[1D000000]00        mov [person_title+rax-1], byte 0
+   147                                  
+   148 000000CE B800000000              mov rax, 0
+   149 000000D3 48BF-                   mov rdi, goodbye
+   149 000000D5 [2F01000000000000] 
+   150 000000DD 48BE-                   mov rsi, name
+   150 000000DF [0000000000000000] 
+   151 000000E7 48BA-                   mov rdx, person_title
+   151 000000E9 [1E00000000000000] 
+   152 000000F1 E8(00000000)            call printf
+   153                                  
+   154                                  
+   155                                  ;prompts user to input sides for triangle
+   156 000000F6 B800000000              mov rax, 0
+   157 000000FB 48BF-                   mov rdi, prompt_sides
+   157 000000FD [9800000000000000] 
+   158 00000105 E8(00000000)            call printf
+   159                                  
+   160                                  ;gets the users keyboard input for the sides
+   161 0000010A B800000000              mov rax, 0
+   162 0000010F 48BF-                   mov rdi, side_input_format
+   162 00000111 [9000000000000000] 
+   163 00000119 48BE-                   mov rsi, side_one
+   163 0000011B [2D00000000000000] 
+   164 00000123 48BA-                   mov rdx, side_two
+   164 00000125 [3500000000000000] 
+   165 0000012D E8(00000000)            call scanf
+   166                                  
+   167                                  ;prompts the user to input the angle (in degrees)
+   168 00000132 B800000000              mov rax, 0
+   169 00000137 48BF-                   mov rdi, prompt_degree
+   169 00000139 [CD00000000000000] 
+   170 00000141 E8(00000000)            call printf
+   171                                  
+   172                                  ;gets users keyboard input for the angle (in degrees)
+   173 00000146 B800000000              mov rax, 0
+   174 0000014B 48BF-                   mov rdi, degree_input_format
+   174 0000014D [C900000000000000] 
+   175 00000155 48BE-                   mov rsi, degree
+   175 00000157 [3D00000000000000] 
+   176 0000015F E8(00000000)            call scanf
+   177                                  
+   178                                  
+   179                                  ;Converting degree to radians
+   180 00000164 F2440F103C25-           movsd xmm15, [degree]
+   180 0000016A [3D000000]         
+   181                                  
+   182 0000016E F2440F593C25-           mulsd xmm15, [pi]
+   182 00000174 [17010000]         
+   183 00000178 F2440F5E3C25-           divsd xmm15, [one_eighty]
+   183 0000017E [27010000]         
+   184 00000182 F2440F113C25-           movsd [degree], xmm15
+   184 00000188 [3D000000]         
+   185                                  
+   186                                  ;computes cos(0)
+   187 0000018C B801000000              mov rax, 1
+   188 00000191 F20F100425-             movsd xmm0, [degree]
+   188 00000196 [3D000000]         
+   189 0000019A E8(00000000)            call cos
+   190 0000019F F20F110425-             movsd [cos_theta], xmm0
+   190 000001A4 [45000000]         
+   191                                  
+   192                                  ;computes 2ab*cos(0)
+   193 000001A8 F2440F103425-           movsd xmm14, [two]
+   193 000001AE [1F010000]         
+   194 000001B2 F2440F593425-           mulsd xmm14, [side_one]
+   194 000001B8 [2D000000]         
+   195 000001BC F2440F593425-           mulsd xmm14, [side_two]
+   195 000001C2 [35000000]         
+   196 000001C6 F2440F593425-           mulsd xmm14, [cos_theta]
+   196 000001CC [45000000]         
+   197                                  
+   198                                  
+   199                                  ;computing c^2 = a^2 + b^2
+   200 000001D0 F2440F102C25-           movsd xmm13, [side_one]
+   200 000001D6 [2D000000]         
+   201 000001DA F2440F102425-           movsd xmm12, [side_two]
+   201 000001E0 [35000000]         
+   202 000001E4 F2440F592C25-           mulsd xmm13, [side_one]
+   202 000001EA [2D000000]         
+   203 000001EE F2440F592425-           mulsd xmm12, [side_two]
+   203 000001F4 [35000000]         
+   204 000001F8 F2450F58E5              addsd xmm12, xmm13
+   205 000001FD F2450F5CE6              subsd xmm12, xmm14
+   206 00000202 F2450F51E4              sqrtsd xmm12, xmm12
+   207                                  
+   208 00000207 B801000000              mov rax, 1
+   209 0000020C 48BF-                   mov rdi, third_side_format
+   209 0000020E [F300000000000000] 
+   210 00000216 F2410F10C4              movsd xmm0, xmm12
+   211 0000021B E8(00000000)            call printf
+   212                                  
+   213 00000220 F2410F10C4              movsd xmm0, xmm12
+   214                                  
+   215                                  ;Restore the GPRs
+   216 00000225 9D                      popf
+   217 00000226 415F                    pop r15
+   218 00000228 415E                    pop r14
+   219 0000022A 415D                    pop r13
+   220 0000022C 415C                    pop r12
+   221 0000022E 415B                    pop r11
+   222 00000230 415A                    pop r10
+   223 00000232 4159                    pop r9
+   224 00000234 4158                    pop r8
+   225 00000236 5E                      pop rsi
+   226 00000237 5F                      pop rdi
+   227 00000238 5A                      pop rdx
+   228 00000239 59                      pop rcx
+   229 0000023A 5B                      pop rbx
+   230 0000023B 5D                      pop rbp   ;Restore rbp to the base of the activation record of the caller program
+   231 0000023C C3                      ret
+   232                                  ;End of the function average ====================================================================
+   233                                  
