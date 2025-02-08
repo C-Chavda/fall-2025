@@ -45,6 +45,7 @@
     45                                  ;   The input is taken for the other two sides and the angle between them. The program then applies the law of cosines to find the third side.
     46                                  ;
     47                                  
+<<<<<<< HEAD
     48                                  
     49                                  ;===== Begin code area ========================================================================================================
     50                                  
@@ -330,3 +331,73 @@
    267                                                                                              ;the integer stack, and jump to the address found on the stack.
    268                                  ;========== End of program fp-io.asm ======================================================================================================================================
    269                                  ;========1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3=========4=========5=========6=========7**
+=======
+    48                                  extern fgets
+    49                                  
+    50                                  extern stdin
+    51                                  
+    52                                  extern printf                                               ;External C++ function for writing to standard output device
+    53                                  
+    54                                  extern scanf                                                ;External C++ function for reading from the standard input device
+    55                                  
+    56                                  global triangle                                    ;This makes floating_point_io callable by functions outside of this file.
+    57                                  
+    58                                  segment .data                                               ;Place initialized data here
+    59 00000000 0000000000003640        place_holder  dq 22.0
+    60                                  
+    61                                  segment .bss                                                ;Place un-initialized data here.
+    62                                  
+    63                                  align 64                                                    ;Insure that the inext data declaration starts on a 64-byte boundar.
+    64 00000000 <res 00000340>          backuparea resb 832                                         ;Create an array for backup storage having 832 bytes.
+    65                                  
+    66                                  ;===== Begin executable instructions here =====================================================================================
+    67                                  
+    68                                  segment .text                                               ;Place executable instructions in this segment.
+    69                                  
+    70                                  triangle:                                          ;Entry point.  Execution begins here.
+    71                                  
+    72                                  ;=========== Back up all the GPRs whether used in this program or not =========================================================
+    73                                  
+    74 00000000 55                      push       rbp                                              ;Save a copy of the stack base pointer
+    75 00000001 4889E5                  mov        rbp, rsp                                         ;We do this in order to be 100% compatible with C and C++.
+    76 00000004 53                      push       rbx                                              ;Back up rbx
+    77 00000005 51                      push       rcx                                              ;Back up rcx
+    78 00000006 52                      push       rdx                                              ;Back up rdx
+    79 00000007 56                      push       rsi                                              ;Back up rsi
+    80 00000008 57                      push       rdi                                              ;Back up rdi
+    81 00000009 4150                    push       r8                                               ;Back up r8
+    82 0000000B 4151                    push       r9                                               ;Back up r9
+    83 0000000D 4152                    push       r10                                              ;Back up r10
+    84 0000000F 4153                    push       r11                                              ;Back up r11
+    85 00000011 4154                    push       r12                                              ;Back up r12
+    86 00000013 4155                    push       r13                                              ;Back up r13
+    87 00000015 4156                    push       r14                                              ;Back up r14
+    88 00000017 4157                    push       r15                                              ;Back up r15
+    89 00000019 9C                      pushf                                                       ;Back up rflags
+    90                                  
+    91                                  
+    92                                  
+    93 0000001A F20F100425-             movsd xmm0, [place_holder]
+    93 0000001F [00000000]         
+    94                                  ;Restore the original values to the GPRs
+    95 00000023 9D                      popf                                                        ;Restore rflags
+    96 00000024 415F                    pop        r15                                              ;Restore r15
+    97 00000026 415E                    pop        r14                                              ;Restore r14
+    98 00000028 415D                    pop        r13                                              ;Restore r13
+    99 0000002A 415C                    pop        r12                                              ;Restore r12
+   100 0000002C 415B                    pop        r11                                              ;Restore r11
+   101 0000002E 415A                    pop        r10                                              ;Restore r10
+   102 00000030 4159                    pop        r9                                               ;Restore r9
+   103 00000032 4158                    pop        r8                                               ;Restore r8
+   104 00000034 5F                      pop        rdi                                              ;Restore rdi
+   105 00000035 5E                      pop        rsi                                              ;Restore rsi
+   106 00000036 5A                      pop        rdx                                              ;Restore rdx
+   107 00000037 59                      pop        rcx                                              ;Restore rcx
+   108 00000038 5B                      pop        rbx                                              ;Restore rbx
+   109 00000039 5D                      pop        rbp                                              ;Restore rbp
+   110                                  
+   111 0000003A C3                      ret                                                         ;No parameter with this instruction.  This instruction will pop 8 bytes from
+   112                                                                                              ;the integer stack, and jump to the address found on the stack.
+   113                                  ;========== End of program fp-io.asm ======================================================================================================================================
+   114                                  ;========1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3=========4=========5=========6=========7**
+>>>>>>> 6c7c03e48c532ec8e343911ef3b48ce7153a940e
