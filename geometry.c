@@ -18,43 +18,63 @@
 //the place to enumerate everything.  Visit the GNU website to know more details.
 //
 //=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
-//
-//Author information
-//  Author name: Floyd Holliday
-//  Author email: holliday@fullerton.edu
-//
-//Program information
-//  Program name: Basic Float Operations
-//  Programming languages: One modules in C++ and one module in X86
-//  Date program began: 2014-Aug-25
-//  Date of last update: 2014-Sep-29
-//  Date comments upgraded: 2020-July-04
-//  Date open source license added: 2020-Sep-20
-//  Date Basic Float Operations 2.0 released: 2020-November-6
-//  Files in this program: fp-io-driver.cpp, fp-io.asm 
-//  Status: Finished.
-//  References consulted: Seyfarth, Chapter 11
-//  Future upgrade possible: software to validate inputs and reject non-float inputs
-//
-//Purpose
-//  This program will demonstrate how to input a single float number, multiply that inputted number by a floating point
-//  constant and then output the results.
-//
-//This file
-//  File name: fp-io-driver.cpp
-//  Language: C++
-//  Max page width: 132 columns  [132 column width may not be strictly adhered to.]
-//  Compile this file: g++ -c -m64 -Wall -o fp-io-driver.o fp-io-driver.cpp -fno-pie -no-pie -std=c++17
-//     [As the time of upgrade to this program C++ standard 2020 was not available.]
-//  Link this program: g++ -m64 -o fpio.out fp-io-driver.o fp-io.o -fno-pie -no-pie -std=c++17
-
-//===== Message to students ========================================================================================================
-
-//This main function includes two header files, which both enable I/O functions in this same C++ function.
-
 //===== Begin code area ============================================================================================================
+//Modifications by:                                                                                                           *
+//  Author name: Chandresh Chavda                                                                                             *
+//  Author email: chav349@csu.fullerton.edu                                                                                   *
+//  CWID: 885158899                                                                                                           *
+//  Class: 240-11 Section 11                                                                                                  *
+//  Date program modified: 2025-Feb-07                                                                                       *
+//                                                                                                                           *
+//License information                                                                                                         *
+//  This program is free software: you can redistribute it and/or modify it under the terms of the                            *
+//  GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or            *
+//  (at your option) any later version.                                                                                        *
+//  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied       *
+//  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.    *
+//  A copy of the GNU General Public License v3 is available at: https://www.gnu.org/licenses/                                  *
+//****************************************************************************************************************************
+
+//Program information                                                                                                         *
+//  Program name: Triangle                                                                                             *
+//  Programming languages: C and X86                                                                                           *
+//  Purpose: This program calculates for the third side of a triangle based on user inputs and the angle between them.         *
+//  Files in this program: geometry.c, triangle.asm, run.sh                                                                     *
+//                                                                                                                           *
+//Modifications by:                                                                                                           *
+//  Author name: Chandresh Chavda                                                                                             *
+//  Author email: chav349@csu.fullerton.edu                                                                                   *
+//  CWID: 885158899                                                                                                           *
+//  Class: 240-11 Section 11                                                                                                  *
+//  Date program modified: 2025-Feb-07                                                                                        *
+//                                                                                                                           *
+//Original Author:                                                                                                            *
+//  Author name: Floyd Holliday                                                                                               *
+//  Author email: holliday@fullerton.edu                                                                                      *
+//  Program name: Basic Float Operations                                                                                       *
+//  Programming languages: One module in C++ and one module in X86                                                            *
+//  Date program began: 2014-Aug-25                                                                                           *
+//  Date of last update: 2014-Sep-29                                                                                           *
+//  Date open source license added: 2020-Sep-20                                                                              *
+//  Date Basic Float Operations 2.0 released: 2020-November-6                                                                *
+//  Files in this program: fp-io-driver.cpp, fp-io.asm                                                                       *
+//  Status: Finished.                                                                                                         *
+//  References consulted: Seyfarth, Chapter 11                                                                                *
+//  Future upgrade possible: software to validate inputs and reject non-float inputs                                          *
+//                                                                                                                           *
+//Purpose of this file:                                                                                                       *
+//This file defines the main program that takes user input for triangle sides and calculates the third side using a formula.  *
+//It includes external function calls from triangle.asm.                                                                     *
+//
+//This file                                                                                                                   *
+//  File name: geometry.c                                                                                                     *
+//  Language: C                                                                                                               *
+//  Compile: gcc -m64 -Wall -no-pie -o geometry.o -std=c2x -c geometry.c                                                       *
+//  Link: gcc -m64 -no-pie -o calc.out geometry.o triangle.o -std=c2x -Wall -z noexecstack 
+//****************************************************************************************************************************
 
 #include <stdio.h>
+#include <math.h>
 //#include <stdint.h>    //Library not used
 //#include <ctime>
 //#include <cstring>
@@ -63,13 +83,11 @@ extern double triangle();
 
 int main(){
 
-  double mystery_number = -0.00000000000000099;
-  mystery_number = triangle();
-  printf("The initial value of the mystery number is %1.16lf\n",mystery_number);
-  
-
-  return 0;
+    printf("Welcome to the Triangle program maintained by Chandresh Chavda.\n");
+    double count = 0;
+    printf("\nIf errors are discovered please report them to Chandresh Chavda at chav349@csu.fullerton.edu for a quick fix.\n");
+    count = triangle();
+    printf("\nThe main function received this number %8lf and plans to keep it until needed. An integer zero will be returned to the operating system. Bye.\n", count);
+    return 0;
 
 }//End of main
-//=======1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
-

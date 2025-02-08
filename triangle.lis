@@ -1,363 +1,332 @@
      1                                  ;****************************************************************************************************************************
-     2                                  ;Program name: "Basic Float Operations".  This program demonstrates the input and output of a float number and demonstrates *
-     3                                  ;some basic math operations using float numbers.  Copyright (C) 2020 Floyd Holliday.                                        *
-     4                                  ;                                                                                                                           *
-     5                                  ;This file is part of the software program "Basic Float Operations".                                                        *
-     6                                  ;Basic Float Operations is free software: you can redistribute it and/or modify it under the terms of the GNU General Public*
-     7                                  ;License version 3 as published by the Free Software Foundation.                                                            *
-     8                                  ;Basic Float Operations is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the       *
-     9                                  ;implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more      *
-    10                                  ;details.  A copy of the GNU General Public License v3 is available here:  <https:;www.gnu.org/licenses/>.                  *
-    11                                  ;****************************************************************************************************************************
-    12                                  
-    13                                  ;========1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
-    14                                  ;
-    15                                  ;Author information
-    16                                  ;  Author name: Floyd Holliday
-    17                                  ;  Author email: holliday@fullerton.edu
-    18                                  ;
-    19                                  ;Program information
-    20                                  ;  Program name: Basic Float Operations
-    21                                  ;  Programming languages: One modules in C++ and one module in X86
-    22                                  ;  Date program began: 2014-Aug-25
-    23                                  ;  Date of last update: 2014-Sep-29
-    24                                  ;  Date comments upgraded: 2020-July-04
-    25                                  ;  Date open source license added: 2020-Sep-20
-    26                                  ;  Files in this program: fp-io-driver.cpp, fp-io.asm 
-    27                                  ;  Status: Finished.
-    28                                  ;  References consulted: Seyfarth, Chapter 11
-    29                                  ;  Future upgrade possible: software to validate inputs and reject non-float inputs
+     2                                  ;Program name: "Triangle"
+     3                                  ;This program calculates the length of the third side of a triangle given two sides and the angle between them using the 
+     4                                  ;Law of Cosines formula.
+     5                                  ;Copyright (C) 2025 Chandresh Chavda.
+     6                                  ;
+     7                                  ;This file is part of the software program "Triangle".
+     8                                  ;Triangle is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+     9                                  ;License version 3 as published by the Free Software Foundation.
+    10                                  ;This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+    11                                  ;of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+    12                                  ;A copy of the GNU General Public License v3 is available at: https://www.gnu.org/licenses/
+    13                                  ;***********************************************************************************************************************************************************************************************************************************************
+    14                                  
+    15                                  ;========1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3**
+    16                                  ; Author information
+    17                                  ;   Author name: Chandresh Chavda
+    18                                  ;   Author email: chav349@csu.fullerton.edu
+    19                                  ;   CWID: 885158899
+    20                                  ;   Class: 240-11 Section 11
+    21                                  ;
+    22                                  ; Program information
+    23                                  ;   Program name: Triangle
+    24                                  ;   Programming languages: One module in C, one in X86, and one in bash.
+    25                                  ;   Date program began: 2025-Feb-01
+    26                                  ;   Date of last update: 2025-Feb-07
+    27                                  ;   Files in this program: geometry.c, triangle.asm, r.sh.
+    28                                  ;   Testing: Alpha testing completed. All functions are correct.
+    29                                  ;   Status: Ready for release to customers
     30                                  ;
-    31                                  ;Purpose
-    32                                  ;  This program will demonstrate how to input a single float number, multiply that inputted number by a floating point
-    33                                  ;  constant and then output the results.
-    34                                  ;  To students enrolled in 240 class: this program includes a secondary purpose, which is to demonstrate how to do a 
-    35                                  ;     state component back up using instructions xsave and xrstor.  For the most part that is superflous material. You may
-    36                                  ;     safely disregard the two sections on "state component backup".  By the way, you still have to save all the GPRs 
-    37                                  ;     and restore them the long way.
-    38                                  ;
-    39                                  ;This file
-    40                                  ;  File name: fp-io.asm
-    41                                  ;  Language: X86 with Intel syntax.
-    42                                  ;  Max page width: 132 columns
-    43                                  ;  Assemble: nasm -f elf64 -l fp-io.lis -o fp-io.o fp-io.asm
-    44                                  
-    45                                  
-    46                                  ;===== Begin code area ========================================================================================================
+    31                                  ; Purpose
+    32                                  ;   This program calculates for the third side of a triangle based on the user's input for the other two sides and the angle between them
+    33                                  ;
+    34                                  ; This file:
+    35                                  ;   File name: average.asm
+    36                                  ;   Language: X86-64 Assembly
+    37                                  ;   Max page width: 124 columns
+    38                                  ;   Assemble (standard): nasm -f elf64 -l avg.lis -o avg.o average.asm
+    39                                  ;   Assemble (debug): nasm -f elf64 -gdwarf -l avg.lis -o avg.o average.asm
+    40                                  ;   Optimal print specification: Landscape, 7 points, monospace, 8½x11 paper
+    41                                  ;   Prototype of this function: unsigned long helloword();
+    42                                  ;
+    43                                  ; Notes:
+    44                                  ;   This file contains the assembly module for the Triangle program which calculates the third side of a triangle.
+    45                                  ;   The input is taken for the other two sides and the angle between them. The program then applies the law of cosines to find the third side.
+    46                                  ;
     47                                  
-    48                                  extern printf                                               ;External C++ function for writing to standard output device
-    49                                  
-    50                                  extern scanf                                                ;External C++ function for reading from the standard input device
-    51                                  
-    52                                  global triangle                                    ;This makes floating_point_io callable by functions outside of this file.
-    53                                  
-    54                                  three_point_zero equ 0x4008000000000000                     ;Use the hex expression for 64-bit floating point 3.0
-    55                                  
-    56                                  segment .data                                               ;Place initialized data here
-    57                                  
-    58                                  ;===== Declare some messages ==================================================================================================
+    48                                  
+    49                                  ;===== Begin code area ========================================================================================================
+    50                                  
+    51                                  extern printf                                               ;External C++ function for writing to standard output device
+    52                                  extern scanf  
+    53                                  extern fgets
+    54                                  extern stdin
+    55                                  extern strlen
+    56                                  extern cos
+    57                                  global triangle                                    ;This makes floating_point_io callable by functions outside of this file.
+    58                                  string_size equ 48
     59                                  
-    60 00000000 546869732058383620-     initialmessage db "This X86 program will demonstrate the input and output of 8-byte floating point numbers.", 10, 0
-    60 00000009 70726F6772616D2077-
-    60 00000012 696C6C2064656D6F6E-
-    60 0000001B 737472617465207468-
-    60 00000024 6520696E7075742061-
-    60 0000002D 6E64206F7574707574-
-    60 00000036 206F6620382D627974-
-    60 0000003F 6520666C6F6174696E-
-    60 00000048 6720706F696E74206E-
-    60 00000051 756D626572732E0A00 
-    61                                  
-    62 0000005A 456E74657220612066-     promptmessage db "Enter a floating point number in base 10: ", 0
-    62 00000063 6C6F6174696E672070-
-    62 0000006C 6F696E74206E756D62-
-    62 00000075 657220696E20626173-
-    62 0000007E 652031303A2000     
+    60                                  last_name_prompt_size equ 40
+    61                                  title_prompt_size equ 40
+    62                                  
     63                                  
-    64 00000085 5468652076616C7565-     outputmessage db "The value of %1.18lf divided by %1.18lf is %1.18lf", 10, 0
-    64 0000008E 206F662025312E3138-
-    64 00000097 6C6620646976696465-
-    64 000000A0 642062792025312E31-
-    64 000000A9 386C66206973202531-
-    64 000000B2 2E31386C660A00     
-    65                                  
-    66 000000B9 546865207873617665-     xsavenotsupported.notsupportedmessage db "The xsave instruction and the xrstor instruction are not supported in this microprocessor.", 10
-    66 000000C2 20696E737472756374-
-    66 000000CB 696F6E20616E642074-
-    66 000000D4 686520787273746F72-
-    66 000000DD 20696E737472756374-
-    66 000000E6 696F6E20617265206E-
-    66 000000EF 6F7420737570706F72-
-    66 000000F8 74656420696E207468-
-    66 00000101 6973206D6963726F70-
-    66 0000010A 726F636573736F722E-
-    66 00000113 0A                 
-    67 00000114 486F77657665722C20-                                           db "However, processing will continue without backing up state component data", 10, 0
-    67 0000011D 70726F63657373696E-
-    67 00000126 672077696C6C20636F-
-    67 0000012F 6E74696E7565207769-
-    67 00000138 74686F757420626163-
-    67 00000141 6B696E672075702073-
-    67 0000014A 7461746520636F6D70-
-    67 00000153 6F6E656E7420646174-
-    67 0000015C 610A00             
-    68                                  
-    69 0000015F 4920686F706520796F-     goodbye db "I hope you like working with 8-byte floating points numbers.",10
-    69 00000168 75206C696B6520776F-
-    69 00000171 726B696E6720776974-
-    69 0000017A 6820382D6279746520-
-    69 00000183 666C6F6174696E6720-
-    69 0000018C 706F696E7473206E75-
-    69 00000195 6D626572732E0A     
-    70 0000019C 382D62797465206E75-             db "8-byte numbers have the highest precision available in an 8-byte (64-bit) microprocessor.",10,0
-    70 000001A5 6D6265727320686176-
-    70 000001AE 652074686520686967-
-    70 000001B7 686573742070726563-
-    70 000001C0 6973696F6E20617661-
-    70 000001C9 696C61626C6520696E-
-    70 000001D2 20616E20382D627974-
-    70 000001DB 65202836342D626974-
-    70 000001E4 29206D6963726F7072-
-    70 000001ED 6F636573736F722E0A-
-    70 000001F6 00                 
-    71                                  
-    72 000001F7 257300                  stringformat db "%s", 0                                     ;general string format
-    73                                  
-    74 000001FA 257300                  xsavenotsupported.stringformat db "%s", 0
-    75                                  
-    76 000001FD 256C6600                eight_byte_format db "%lf", 0                               ;general 8-byte float format
+    64                                  
+    65                                  segment .data                                               ;Place initialized data here
+    66                                  
+    67                                  
+    68                                    ;  place_holder dq 22.0
+    69                                  
+    70 00000000 506C6561736520656E-     last_name_prompt db "Please enter your last name: ", 0
+    70 00000009 74657220796F757220-
+    70 00000012 6C617374206E616D65-
+    70 0000001B 3A2000             
+    71 0000001E 506C6561736520656E-     title_prompt db "Please enter your title (Mr, Ms, Nurse, Engineer, etc): ", 0
+    71 00000027 74657220796F757220-
+    71 00000030 7469746C6520284D72-
+    71 00000039 2C204D732C204E7572-
+    71 00000042 73652C20456E67696E-
+    71 0000004B 6565722C2065746329-
+    71 00000054 3A2000             
+    72 00000057 506C6561736520656E-     sides_prompt db "Please enter the sides of your triangle separated by WS: ", 0
+    72 00000060 746572207468652073-
+    72 00000069 69646573206F662079-
+    72 00000072 6F757220747269616E-
+    72 0000007B 676C65207365706172-
+    72 00000084 617465642062792057-
+    72 0000008D 533A2000           
+    73 00000091 506C6561736520656E-     angle_size_prompt db "Please enter the size in degrees of the angle between those sides: ", 0
+    73 0000009A 746572207468652073-
+    73 000000A3 697A6520696E206465-
+    73 000000AC 6772656573206F6620-
+    73 000000B5 74686520616E676C65-
+    73 000000BE 206265747765656E20-
+    73 000000C7 74686F736520736964-
+    73 000000D0 65733A2000         
+    74                                  
+    75 000000D5 256C6620256C6600        side_input_format db "%lf %lf", 0    
+    76 000000DD 256C6600                degree_input_format db "%lf", 0
     77                                  
-    78                                  segment .bss                                                ;Place un-initialized data here.
+    78 000000E1 546865206C656E6774-     third_side_format db "The length of the third side is: %lf units.", 0
+    78 000000EA 68206F662074686520-
+    78 000000F3 746869726420736964-
+    78 000000FC 652069733A20256C66-
+    78 00000105 20756E6974732E00   
     79                                  
-    80                                  align 64                                                    ;Insure that the inext data declaration starts on a 64-byte boundar.
-    81 00000000 <res 00000340>          backuparea resb 832                                         ;Create an array for backup storage having 832 bytes.
+    80                                  
+    81 0000010D 506C6561736520656E-     enjoy_message db "Please enjoy your triangles %s %s.", 0
+    81 00000116 6A6F7920796F757220-
+    81 0000011F 747269616E676C6573-
+    81 00000128 2025732025732E00   
     82                                  
-    83                                  ;===== Begin executable instructions here =====================================================================================
-    84                                  
-    85                                  segment .text                                               ;Place executable instructions in this segment.
-    86                                  
-    87                                  triangle:                                          ;Entry point.  Execution begins here.
-    88                                  
-    89                                  ;=========== Back up all the GPRs whether used in this program or not =========================================================
-    90                                  
-    91 00000000 55                      push       rbp                                              ;Save a copy of the stack base pointer
-    92 00000001 4889E5                  mov        rbp, rsp                                         ;We do this in order to be 100% compatible with C and C++.
-    93 00000004 53                      push       rbx                                              ;Back up rbx
-    94 00000005 51                      push       rcx                                              ;Back up rcx
-    95 00000006 52                      push       rdx                                              ;Back up rdx
-    96 00000007 56                      push       rsi                                              ;Back up rsi
-    97 00000008 57                      push       rdi                                              ;Back up rdi
-    98 00000009 4150                    push       r8                                               ;Back up r8
-    99 0000000B 4151                    push       r9                                               ;Back up r9
-   100 0000000D 4152                    push       r10                                              ;Back up r10
-   101 0000000F 4153                    push       r11                                              ;Back up r11
-   102 00000011 4154                    push       r12                                              ;Back up r12
-   103 00000013 4155                    push       r13                                              ;Back up r13
-   104 00000015 4156                    push       r14                                              ;Back up r14
-   105 00000017 4157                    push       r15                                              ;Back up r15
-   106 00000019 9C                      pushf                                                       ;Back up rflags
-   107                                  
+    83                                  
+    84 00000130 182D4454FB210940        pi dq 3.141592653589793
+    85 00000138 0000000000806640        one_eighty dq 180.0
+    86 00000140 0000000000000040        two dq 2.0
+    87                                  
+    88                                  segment .bss                                                ;Place un-initialized data here.
+    89                                  
+    90                                      align 64                                                    ;Insure that the inext data declaration starts on a 64-byte boundar.
+    91 00000000 <res 00000340>              backuparea resb 832                                         ;Create an array for backup storage having 832 bytes.
+    92 00000340 <res 00000028>              last_name resb 40
+    93 00000368 <res 00000028>              title resb 40
+    94 00000390 <res 00000008>              side_1 resq 1  ; Reserve space for the first side (double type)
+    95 00000398 <res 00000008>              side_2 resq 1  ; Reserve space for the second side (double type)
+    96 000003A0 <res 00000008>              angle resq 1   ; Reserve space for the angle (double type)
+    97 000003A8 <res 00000008>              degree resq 1
+    98 000003B0 <res 00000008>              cos_theta resq 1
+    99 000003B8 <res 00000008>              third_side resq 1
+   100                                     
+   101                                  ;===== Begin executable instructions here =====================================================================================
+   102                                  
+   103                                  segment .text                                               ;Place executable instructions in this segment.
+   104                                  
+   105                                  triangle:                                          ;Entry point.  Execution begins here.
+   106                                  
+   107                                  ;=========== Back up all the GPRs whether used in this program or not =========================================================
    108                                  
-   109                                  ;==============================================================================================================================
-   110                                  ;===== Begin State Component Backup ===========================================================================================
-   111                                  ;==============================================================================================================================
-   112                                  
-   113                                  ;=========== Before proceeding verify that this computer supports xsave and xrstor ============================================
-   114                                  ;Bit #26 of rcx, written rcx[26], must be 1; otherwise xsave and xrstor are not supported by this computer.
-   115                                  ;Preconditions: rax holds 1.
-   116 0000001A B801000000              mov        rax, 1
-   117                                  
-   118                                  ;Execute the cpuid instruction
-   119 0000001F 0FA2                    cpuid
-   120                                  
-   121                                  ;Postconditions: If rcx[26]==1 then xsave is supported.  If rcx[26]==0 then xsave is not supported.
-   122                                  
-   123                                  ;=========== Extract bit #26 and test it ======================================================================================
-   124                                  
-   125 00000021 4881E100000004          and        rcx, 0x0000000004000000                          ;The mask 0x0000000004000000 has a 1 in position #26.  Now rcx is either all zeros or
-   126                                                                                              ;has a single 1 in position #26 and zeros everywhere else.
-   127 00000028 4883F900                cmp        rcx, 0                                           ;Is (rcx == 0)?
-   128 0000002C 742A                    je         xsavenotsupported                                ;Skip the section that backs up state component data.
-   129                                  
-   130                                  ;========== Call the function to obtain the bitmap of state components ========================================================
+   109 00000000 55                          push       rbp                                              ;Save a copy of the stack base pointer
+   110 00000001 4889E5                      mov        rbp, rsp                                         ;We do this in order to be 100% compatible with C and C++.
+   111 00000004 53                          push       rbx                                              ;Back up rbx
+   112 00000005 51                          push       rcx                                              ;Back up rcx
+   113 00000006 52                          push       rdx                                              ;Back up rdx
+   114 00000007 56                          push       rsi                                              ;Back up rsi
+   115 00000008 57                          push       rdi                                              ;Back up rdi
+   116 00000009 4150                        push       r8                                               ;Back up r8
+   117 0000000B 4151                        push       r9                                               ;Back up r9
+   118 0000000D 4152                        push       r10                                              ;Back up r10
+   119 0000000F 4153                        push       r11                                              ;Back up r11
+   120 00000011 4154                        push       r12                                              ;Back up r12
+   121 00000013 4155                        push       r13                                              ;Back up r13
+   122 00000015 4156                        push       r14                                              ;Back up r14
+   123 00000017 4157                        push       r15                                              ;Back up r15
+   124 00000019 9C                          pushf                                                       ;Back up rflags
+   125                                  
+   126                                      ; Promt for last name
+   127 0000001A B800000000                  mov rax, 0
+   128 0000001F 48BF-                       mov rdi, last_name_prompt
+   128 00000021 [0000000000000000] 
+   129 00000029 E8(00000000)                call printf
+   130                                          
    131                                  
-   132                                  ;Preconditions
-   133 0000002E B80D000000              mov        rax, 0x000000000000000d                          ;Place 13 in rax.  This number is provided in the Intel manual
-   134 00000033 B900000000              mov        rcx, 0                                           ;0 is parameter for subfunction 0
-   135                                  
-   136                                  ;Call the function
-   137 00000038 0FA2                    cpuid                                                       ;cpuid is an essential function that returns information about the cpu
+   132                                      ; Get the last name from user
+   133                                    
+   134 0000002E 48BF-                       mov rdi, last_name
+   134 00000030 [4003000000000000] 
+   135 00000038 BE28000000                  mov rsi, last_name_prompt_size
+   136 0000003D 488B1425[00000000]          mov rdx, [stdin]
+   137 00000045 E8(00000000)                call fgets
    138                                  
-   139                                  ;Postconditions (There are 2 of these):
-   140                                  
-   141                                  ;1.  edx:eax is a bit map of state components managed by xsave.  At the time this program was written (2014 June) there were exactly 3 state components.  Therefore, bits
-   142                                  ;    numbered 2, 1, and 0 are important for current cpu technology.
-   143                                  ;2.  ecx holds the number of bytes required to store all the data of enabled state components. [Post condition 2 is not used in this program.]
-   144                                  ;This program assumes that under current technology (year 2014) there are at most three state components having a maximum combined data storage requirement of 832 bytes.
-   145                                  ;Therefore, the value in ecx will be less than or equal to 832.
-   146                                  
-   147                                  ;Precaution: As an insurance against a future time when there will be more than 3 state components in a processor of the X86 family the state component bitmap is masked to
-   148                                  ;allow only 3 state components maximum.
-   149                                  
-   150 0000003A 41BF07000000            mov        r15, 7                                           ;7 equals three 1 bits.
-   151 00000040 4C21F8                  and        rax, r15                                         ;Bits 63-3 become zeros.
-   152 00000043 41BF00000000            mov        r15, 0                                           ;0 equals 64 binary zeros.
-   153 00000049 4C21FA                  and        rdx, r15                                         ;Zero out rdx.
-   154                                  
-   155                                  ;========== Save all the data of all three components except GPRs =============================================================
-   156                                  
-   157                                  ;The instruction xsave will save those state components with on bits in the bitmap.  At this point edx:eax continues to hold the state component bitmap.
-   158                                  
-   159                                  ;Precondition: edx:eax holds the state component bit map.  This condition has been met by the two pops preceding this statement.
-   160 0000004C 0FAE2425[00000000]      xsave      [backuparea]                                     ;All the data of state components managed by xsave have been written to backuparea.
-   161                                  
-   162 00000054 6AFF                    push qword -1                                               ;Set a flag (-1 = true) to indicate that state component data were backed up.
-   163 00000056 EB20                    jmp        startapplication
+   139                                      ; remove \n
+   140 0000004A B800000000                  mov rax, 0
+   141 0000004F 48BF-                       mov rdi, last_name
+   141 00000051 [4003000000000000] 
+   142 00000059 BE27000000                  mov rsi, 39
+   143 0000005E E8(00000000)                call strlen
+   144 00000063 C680[3F030000]00            mov byte[last_name + rax -1], 0 ;replace last character with null byte
+   145                                  
+   146                                      ; Promt for title
+   147 0000006A B800000000                  mov rax, 0
+   148 0000006F 48BF-                       mov rdi, title_prompt
+   148 00000071 [1E00000000000000] 
+   149 00000079 E8(00000000)                call printf
+   150                                          
+   151                                  
+   152                                      ; Get the title from user
+   153 0000007E 48BF-                       mov rdi, title
+   153 00000080 [6803000000000000] 
+   154 00000088 BE28000000                  mov rsi, title_prompt_size
+   155 0000008D 488B1425[00000000]          mov rdx, [stdin]
+   156 00000095 E8(00000000)                call fgets
+   157                                  
+   158                                      ; remove \n
+   159 0000009A B800000000                  mov rax, 0
+   160 0000009F 48BF-                       mov rdi, title
+   160 000000A1 [6803000000000000] 
+   161 000000A9 BE27000000                  mov rsi, 39
+   162 000000AE E8(00000000)                call strlen
+   163 000000B3 C680[67030000]00            mov byte[title + rax -1], 0
    164                                  
-   165                                  ;========== Show message xsave is not supported on this platform ==============================================================
-   166                                  xsavenotsupported:
-   167                                  
-   168 00000058 B800000000              mov        rax, 0
-   169 0000005D 48BF-                   mov        rdi, .stringformat
-   169 0000005F [FA01000000000000] 
-   170 00000067 48BE-                   mov        rsi, .notsupportedmessage                        ;"The xsave instruction is not suported in this microprocessor.
-   170 00000069 [B900000000000000] 
-   171 00000071 E8(00000000)            call       printf
-   172                                  
-   173 00000076 6A00                    push qword 0                                                ;Set a flag (0 = false) to indicate that state component data were not backed up.
-   174                                  
-   175                                  ;==============================================================================================================================
-   176                                  ;===== End of State Component Backup ==========================================================================================
-   177                                  ;==============================================================================================================================
-   178                                  
-   179                                  
-   180                                  ;==============================================================================================================================
-   181                                  startapplication: ;===== Begin the application here: demonstrate floating point i/o ===========================================
-   182                                  ;==============================================================================================================================
-   183                                  
-   184                                  ;Show the initial message
-   185 00000078 6A00                    push qword 0                                                ;Get onto the 16-byte boundary
-   186 0000007A B800000000              mov qword  rax, 0                                           ;No data from SSE will be printed
-   187 0000007F 48BF-                   mov        rdi, stringformat                                ;"%s"
-   187 00000081 [F701000000000000] 
-   188 00000089 48BE-                   mov        rsi, initialmessage                              ;"This X86 program will demonstrate the input and output of 8-byte ... "
-   188 0000008B [0000000000000000] 
-   189 00000093 E8(00000000)            call       printf                                           ;Call a library function to make the output
-   190                                  
+   165                                  
+   166                                    ; Prompt for sides input
+   167 000000BA 48BF-                       mov rdi, sides_prompt
+   167 000000BC [5700000000000000] 
+   168 000000C4 E8(00000000)                call printf
+   169                                  
+   170                                      ; Read two floating-point numbers (sides of the triangle)
+   171                                     ; Read two floating-point numbers (sides of the triangle)
+   172 000000C9 4883EC10                    sub rsp, 16             ; Allocate space for two floats (aligned by 16 bytes)
+   173 000000CD 48BF-                       mov rdi, side_input_format  ; Format string for reading two doubles
+   173 000000CF [D500000000000000] 
+   174 000000D7 48BE-                       mov rsi, side_1        ; Address for the first side
+   174 000000D9 [9003000000000000] 
+   175 000000E1 48BA-                       mov rdx, side_2        ; Address for the second side
+   175 000000E3 [9803000000000000] 
+   176 000000EB E8(00000000)                call scanf
+   177                                  
+   178                                      ; Move the input values into xmm registers
+   179 000000F0 F2440F103425-               movsd xmm14, [side_1]   ; Move first side into xmm14
+   179 000000F6 [90030000]         
+   180 000000FA F2440F103C25-               movsd xmm15, [side_2]   ; Move second side into xmm15
+   180 00000100 [98030000]         
+   181 00000104 4883C410                    add rsp, 16
+   182                                  
+   183                                  ;=========== Prompt for angle input ================================================================================
+   184                                  
+   185                                      ; Prompt for angle input
+   186 00000108 48BF-                       mov rdi, angle_size_prompt      ; Load address of the prompt message into rdi
+   186 0000010A [9100000000000000] 
+   187 00000112 E8(00000000)                call printf                    ; Call printf to display the prompt
+   188                                  
+   189                                      ; Allocate space for the angle input (double type, 8 bytes)
+   190 00000117 4883EC10                    sub rsp, 16                     ; Allocate space on the stack for the angle (double)
    191                                  
-   192                                  ;Prompt for floating point number
-   193 00000098 B800000000              mov qword  rax, 0                                           ;No data from SSE will be printed
-   194 0000009D 48BF-                   mov        rdi, stringformat                                ;"%s"
-   194 0000009F [F701000000000000] 
-   195 000000A7 48BE-                   mov        rsi, promptmessage                               ;"Enter a floating point number in base 10: "
-   195 000000A9 [5A00000000000000] 
-   196 000000B1 E8(00000000)            call       printf                                           ;Call a library function to make the output
-   197 000000B6 58                      pop rax                                                     ;Reverse an earlier push
-   198                                  
+   192                                      ; Set up the format for scanf to read a floating-point value (%lf)
+   193 0000011B 48BF-                       mov rdi, degree_input_format   ; Load format string for reading a double
+   193 0000011D [DD00000000000000] 
+   194 00000125 48BE-                       mov rsi, degree                ; Load address of the 'degree' variable (where input will be stored)
+   194 00000127 [A803000000000000] 
+   195 0000012F E8(00000000)                call scanf                     ; Call scanf to read the angle input
+   196                                  
+   197                                      ; Move the input value (angle) into xmm13 register
+   198 00000134 F2440F102C25-               movsd xmm13, [degree]          ; Move the angle value into xmm13 register (SSE register for double precision)
+   198 0000013A [A8030000]         
    199                                  
-   200                                  ;Obtain a floating point number from the standard input device and store a copy in xmm0
-   201 000000B7 6A00                    push qword 0                                                ;Reserve 8 bytes of storage for the incoming number
-   202 000000B9 B800000000              mov qword  rax, 0                                           ;SSE is not involved in this scanf operation
-   203 000000BE 48BF-                   mov        rdi, eight_byte_format                           ;"%lf"
-   203 000000C0 [FD01000000000000] 
-   204 000000C8 4889E6                  mov        rsi, rsp                                         ;Give scanf a point to the reserved storage
-   205 000000CB E8(00000000)            call       scanf                                            ;Call a library function to do the input work
-   206 000000D0 F20F100424              movsd      xmm0, [rsp]                                      ;Copy the inputted number to xmm0
-   207 000000D5 58                      pop        rax                                              ;Make free the storage that was used by scanf
-   208                                  
-   209                                  ;Divide the inputted number by a constant
-   210 000000D6 F20F10D0                movsd      xmm2, xmm0                                       ;There are 2 copies of the inputted number: xmm0 and xmm2
-   211 000000DA 48BB00000000000008-     mov        rbx, three_point_zero                            ;3.0 is placed in rbx, and is ready to be pushed on the stack.
-   211 000000E3 40                 
-   212 000000E4 53                      push       rbx                                              ;Place the constant on the integer stack
-   213 000000E5 F20F5E1424              divsd      xmm2, [rsp]                                      ;Divide the input number by the constant
-   214 000000EA F20F100C24              movsd      xmm1, [rsp]                                      ;Copy the divisor to xmm1
-   215 000000EF 58                      pop        rax                                              ;Discard the divisor from the integer stack
-   216                                  
-   217                                  ;Save a copy of the quotient before calling printf
-   218 000000F0 6A00                    push qword 0                                                ;Reserve 8 bytes of storage
-   219 000000F2 F20F111424              movsd      [rsp], xmm2                                      ;Place a backup copy of the quotient in the reserved storage
-   220                                  
-   221                                  ;Show the result of the division operation
-   222 000000F7 B803000000              mov        rax, 3                                           ;3 floating point numbers will be outputted
-   223 000000FC 48BF-                   mov        rdi, outputmessage                               ;"The value of %1.18lf divided by %1.18lf is %1.18lf"
-   223 000000FE [8500000000000000] 
-   224 00000106 E8(00000000)            call       printf                                           ;Call a library function to do the hard work
-   225                                  
-   226                                  ;Output the concluding message
-   227 0000010B B800000000              mov qword  rax, 0                                           ;No data from SSE will be printed
-   228 00000110 48BF-                   mov        rdi, stringformat                                ;"%s"
-   228 00000112 [F701000000000000] 
-   229 0000011A 48BE-                   mov        rsi, goodbye                                     ;"This summation program will now return to the driver.  Have a nice day."
-   229 0000011C [5F01000000000000] 
-   230 00000124 E8(00000000)            call       printf                                           ;Call a llibrary function to do the hard work.
-   231                                  
-   232                                  
-   233                                  ;===== Retrieve a copy of the quotient that was backed up earlier =============================================================
-   234                                  
-   235 00000129 415E                    pop        r14                                              ;A copy of the quotient is in r14 (temporary storage)
-   236                                  
-   237                                  ;Now the stack is in the same state as when the application area was entered.  It is safe to leave this application area.
-   238                                  
+   200                                  
+   201                                      ; Clean up the stack after reading the input
+   202 0000013E 4883C410                    add rsp, 16                     ; Restore the stack (8 bytes for the angle input)
+   203                                  
+   204                                  
+   205                                      ; convert degree to radians
+   206 00000142 F2440F102C25-               movsd xmm13, [degree]
+   206 00000148 [A8030000]         
+   207                                  
+   208 0000014C F2440F592C25-               mulsd xmm13, [pi]
+   208 00000152 [30010000]         
+   209 00000156 F2440F5E2C25-               divsd xmm13, [one_eighty]
+   209 0000015C [38010000]         
+   210 00000160 F2440F112C25-               movsd [degree], xmm13
+   210 00000166 [A8030000]         
+   211                                  
+   212                                      ;computes cos(0)
+   213 0000016A B801000000                  mov rax, 1
+   214 0000016F F20F100425-                 movsd xmm0, [degree]
+   214 00000174 [A8030000]         
+   215 00000178 E8(00000000)                call cos
+   216 0000017D F20F110425-                 movsd [cos_theta], xmm0
+   216 00000182 [B0030000]         
+   217                                  
+   218                                      ;computes 2ab*cos(0)
+   219 00000186 F2440F103425-               movsd xmm14, [two]
+   219 0000018C [40010000]         
+   220 00000190 F2440F593425-               mulsd xmm14, [side_1]
+   220 00000196 [90030000]         
+   221 0000019A F2440F593425-               mulsd xmm14, [side_2]
+   221 000001A0 [98030000]         
+   222 000001A4 F2440F593425-               mulsd xmm14, [cos_theta]
+   222 000001AA [B0030000]         
+   223                                  
+   224                                  
+   225                                      ;computing c^2 = a^2 + b^2
+   226 000001AE F2440F102C25-               movsd xmm13, [side_1]
+   226 000001B4 [90030000]         
+   227 000001B8 F2440F102425-               movsd xmm12, [side_2]
+   227 000001BE [98030000]         
+   228 000001C2 F2440F592C25-               mulsd xmm13, [side_1]
+   228 000001C8 [90030000]         
+   229 000001CC F2440F592425-               mulsd xmm12, [side_2]
+   229 000001D2 [98030000]         
+   230 000001D6 F2450F58E5                  addsd xmm12, xmm13
+   231 000001DB F2450F5CE6                  subsd xmm12, xmm14
+   232 000001E0 F2450F51E4                  sqrtsd xmm12, xmm12
+   233                                   
+   234                                    ; Print the length of the third side
+   235 000001E5 B801000000                  mov rax, 1
+   236 000001EA 48BF-                       mov rdi, third_side_format
+   236 000001EC [E100000000000000] 
+   237 000001F4 F2410F10C4                  movsd xmm0, xmm12
+   238 000001F9 E8(00000000)                call printf
    239                                  
-   240                                  ;==============================================================================================================================
-   241                                  ;===== Begin State Component Restore ==========================================================================================
-   242                                  ;==============================================================================================================================
-   243                                  
-   244                                  ;Check the flag to determine if state components were really backed up
-   245 0000012B 5B                      pop        rbx                                              ;Obtain a copy of the flag that indicates state component backup or not.
-   246 0000012C 4883FB00                cmp        rbx, 0                                           ;If there was no backup of state components then jump past the restore section.
-   247 00000130 7426                    je         setreturnvalue                                   ;Go to set up the return value.
-   248                                  
-   249                                  ;Continue with restoration of state components;
-   250                                  
-   251                                  ;Precondition: edx:eax must hold the state component bitmap.  Therefore, go get a new copy of that bitmap.
-   252                                  
-   253                                  ;Preconditions for obtaining the bitmap from the cpuid instruction
-   254 00000132 B80D000000              mov        rax, 0x000000000000000d                          ;Place 13 in rax.  This number is provided in the Intel manual
-   255 00000137 B900000000              mov        rcx, 0                                           ;0 is parameter for subfunction 0
-   256                                  
-   257                                  ;Call the function
-   258 0000013C 0FA2                    cpuid                                                       ;cpuid is an essential function that returns information about the cpu
-   259                                  
-   260                                  ;Postcondition: The bitmap in now in edx:eax
-   261                                  
-   262                                  ;Future insurance: Make sure the bitmap is limited to a maximum of 3 state components.
-   263 0000013E 41BF07000000            mov        r15, 7
-   264 00000144 4C21F8                  and        rax, r15
-   265 00000147 41BF00000000            mov        r15, 0
-   266 0000014D 4C21FA                  and        rdx, r15
-   267                                  
-   268 00000150 0FAE2C25[00000000]      xrstor     [backuparea]
-   269                                  
-   270                                  ;==============================================================================================================================
-   271                                  ;===== End State Component Restore ============================================================================================
-   272                                  ;==============================================================================================================================
-   273                                  
-   274                                  
-   275                                  setreturnvalue:
-   276 00000158 4156                    push       r14                                              ;r14 continues to hold the first computed floating point value.
-   277 0000015A F20F100424              movsd      xmm0, [rsp]                                      ;That first computed floating point value is copied to xmm0[63-0]
-   278 0000015F 415E                    pop        r14                                              ;Reverse the push of two lines earlier.
-   279                                  
-   280                                  ;Restore the original values to the GPRs
-   281 00000161 9D                      popf                                                        ;Restore rflags
-   282 00000162 415F                    pop        r15                                              ;Restore r15
-   283 00000164 415E                    pop        r14                                              ;Restore r14
-   284 00000166 415D                    pop        r13                                              ;Restore r13
-   285 00000168 415C                    pop        r12                                              ;Restore r12
-   286 0000016A 415B                    pop        r11                                              ;Restore r11
-   287 0000016C 415A                    pop        r10                                              ;Restore r10
-   288 0000016E 4159                    pop        r9                                               ;Restore r9
-   289 00000170 4158                    pop        r8                                               ;Restore r8
-   290 00000172 5F                      pop        rdi                                              ;Restore rdi
-   291 00000173 5E                      pop        rsi                                              ;Restore rsi
-   292 00000174 5A                      pop        rdx                                              ;Restore rdx
-   293 00000175 59                      pop        rcx                                              ;Restore rcx
-   294 00000176 5B                      pop        rbx                                              ;Restore rbx
-   295 00000177 5D                      pop        rbp                                              ;Restore rbp
-   296                                  
-   297 00000178 C3                      ret                                                         ;No parameter with this instruction.  This instruction will pop 8 bytes from
-   298                                                                                              ;the integer stack, and jump to the address found on the stack.
-   299                                  ;========== End of program fp-io.asm ======================================================================================================================================
-   300                                  ;========1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3=========4=========5=========6=========7**
+   240                                    
+   241                                  ; Print the "Please enjoy your triangles" message
+   242 000001FE B800000000                  mov rax, 0
+   243 00000203 48BF-                       mov rdi, enjoy_message
+   243 00000205 [0D01000000000000] 
+   244 0000020D 48BE-                       mov rsi, title
+   244 0000020F [6803000000000000] 
+   245 00000217 48BA-                       mov rdx, last_name
+   245 00000219 [4003000000000000] 
+   246 00000221 E8(00000000)                call printf
+   247                                  
+   248 00000226 F2410F10C4                  movsd xmm0, xmm12
+   249                                      ;Restore the original values to the GPRs
+   250 0000022B 9D                          popf                                                        ;Restore rflags
+   251 0000022C 415F                        pop        r15                                              ;Restore r15
+   252 0000022E 415E                        pop        r14                                              ;Restore r14
+   253 00000230 415D                        pop        r13                                              ;Restore r13
+   254 00000232 415C                        pop        r12                                              ;Restore r12
+   255 00000234 415B                        pop        r11                                              ;Restore r11
+   256 00000236 415A                        pop        r10                                              ;Restore r10
+   257 00000238 4159                        pop        r9                                               ;Restore r9
+   258 0000023A 4158                        pop        r8                                               ;Restore r8
+   259 0000023C 5F                          pop        rdi                                              ;Restore rdi
+   260 0000023D 5E                          pop        rsi                                              ;Restore rsi
+   261 0000023E 5A                          pop        rdx                                              ;Restore rdx
+   262 0000023F 59                          pop        rcx                                              ;Restore rcx
+   263 00000240 5B                          pop        rbx                                              ;Restore rbx
+   264 00000241 5D                          pop        rbp                                              ;Restore rbp
+   265                                  
+   266 00000242 C3                      ret                                                         ;No parameter with this instruction.  This instruction will pop 8 bytes from
+   267                                                                                              ;the integer stack, and jump to the address found on the stack.
+   268                                  ;========== End of program fp-io.asm ======================================================================================================================================
+   269                                  ;========1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3=========4=========5=========6=========7**
