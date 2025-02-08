@@ -171,7 +171,6 @@ triangle:                                          ;Entry point.  Execution begi
     mov rdi, sides_prompt
     call printf
 
-<<<<<<< HEAD
     ; Read two floating-point numbers (sides of the triangle)
    ; Read two floating-point numbers (sides of the triangle)
     sub rsp, 16             ; Allocate space for two floats (aligned by 16 bytes)
@@ -267,25 +266,6 @@ triangle:                                          ;Entry point.  Execution begi
     pop        rcx                                              ;Restore rcx
     pop        rbx                                              ;Restore rbx
     pop        rbp                                              ;Restore rbp
-=======
-movsd xmm0, [place_holder]
-;Restore the original values to the GPRs
-popf                                                        ;Restore rflags
-pop        r15                                              ;Restore r15
-pop        r14                                              ;Restore r14
-pop        r13                                              ;Restore r13
-pop        r12                                              ;Restore r12
-pop        r11                                              ;Restore r11
-pop        r10                                              ;Restore r10
-pop        r9                                               ;Restore r9
-pop        r8                                               ;Restore r8
-pop        rdi                                              ;Restore rdi
-pop        rsi                                              ;Restore rsi
-pop        rdx                                              ;Restore rdx
-pop        rcx                                              ;Restore rcx
-pop        rbx                                              ;Restore rbx
-pop        rbp                                              ;Restore rbp
->>>>>>> 6c7c03e48c532ec8e343911ef3b48ce7153a940e
 
 ret                                                         ;No parameter with this instruction.  This instruction will pop 8 bytes from
                                                             ;the integer stack, and jump to the address found on the stack.

@@ -45,359 +45,292 @@
     45                                  ;   The input is taken for the other two sides and the angle between them. The program then applies the law of cosines to find the third side.
     46                                  ;
     47                                  
-<<<<<<< HEAD
     48                                  
     49                                  ;===== Begin code area ========================================================================================================
     50                                  
-    51                                  extern printf                                               ;External C++ function for writing to standard output device
-    52                                  extern scanf  
-    53                                  extern fgets
-    54                                  extern stdin
-    55                                  extern strlen
-    56                                  extern cos
-    57                                  global triangle                                    ;This makes floating_point_io callable by functions outside of this file.
-    58                                  string_size equ 48
-    59                                  
-    60                                  last_name_prompt_size equ 40
-    61                                  title_prompt_size equ 40
-    62                                  
+    51                                  extern fgets
+    52                                  
+    53                                  extern stdin
+    54                                  
+    55                                  extern printf                                               ;External C++ function for writing to standard output device
+    56                                  extern scanf  
+    57                                  extern fgets
+    58                                  extern stdin
+    59                                  extern strlen
+    60                                  extern cos
+    61                                  global triangle                                    ;This makes floating_point_io callable by functions outside of this file.
+    62                                  string_size equ 48
     63                                  
-    64                                  
-    65                                  segment .data                                               ;Place initialized data here
+    64                                  last_name_prompt_size equ 40
+    65                                  title_prompt_size equ 40
     66                                  
     67                                  
-    68                                    ;  place_holder dq 22.0
-    69                                  
-    70 00000000 506C6561736520656E-     last_name_prompt db "Please enter your last name: ", 0
-    70 00000009 74657220796F757220-
-    70 00000012 6C617374206E616D65-
-    70 0000001B 3A2000             
-    71 0000001E 506C6561736520656E-     title_prompt db "Please enter your title (Mr, Ms, Nurse, Engineer, etc): ", 0
-    71 00000027 74657220796F757220-
-    71 00000030 7469746C6520284D72-
-    71 00000039 2C204D732C204E7572-
-    71 00000042 73652C20456E67696E-
-    71 0000004B 6565722C2065746329-
-    71 00000054 3A2000             
-    72 00000057 506C6561736520656E-     sides_prompt db "Please enter the sides of your triangle separated by WS: ", 0
-    72 00000060 746572207468652073-
-    72 00000069 69646573206F662079-
-    72 00000072 6F757220747269616E-
-    72 0000007B 676C65207365706172-
-    72 00000084 617465642062792057-
-    72 0000008D 533A2000           
-    73 00000091 506C6561736520656E-     angle_size_prompt db "Please enter the size in degrees of the angle between those sides: ", 0
-    73 0000009A 746572207468652073-
-    73 000000A3 697A6520696E206465-
-    73 000000AC 6772656573206F6620-
-    73 000000B5 74686520616E676C65-
-    73 000000BE 206265747765656E20-
-    73 000000C7 74686F736520736964-
-    73 000000D0 65733A2000         
-    74                                  
-    75 000000D5 256C6620256C6600        side_input_format db "%lf %lf", 0    
-    76 000000DD 256C6600                degree_input_format db "%lf", 0
-    77                                  
-    78 000000E1 546865206C656E6774-     third_side_format db "The length of the third side is: %lf units.", 0
-    78 000000EA 68206F662074686520-
-    78 000000F3 746869726420736964-
-    78 000000FC 652069733A20256C66-
-    78 00000105 20756E6974732E00   
-    79                                  
-    80                                  
-    81 0000010D 506C6561736520656E-     enjoy_message db "Please enjoy your triangles %s %s.", 0
-    81 00000116 6A6F7920796F757220-
-    81 0000011F 747269616E676C6573-
-    81 00000128 2025732025732E00   
-    82                                  
+    68                                  
+    69                                  segment .data                                               ;Place initialized data here
+    70 00000000 0000000000003640        place_holder  dq 22.0
+    71                                  
+    72                                    ;  place_holder dq 22.0
+    73                                  
+    74 00000008 506C6561736520656E-     last_name_prompt db "Please enter your last name: ", 0
+    74 00000011 74657220796F757220-
+    74 0000001A 6C617374206E616D65-
+    74 00000023 3A2000             
+    75 00000026 506C6561736520656E-     title_prompt db "Please enter your title (Mr, Ms, Nurse, Engineer, etc): ", 0
+    75 0000002F 74657220796F757220-
+    75 00000038 7469746C6520284D72-
+    75 00000041 2C204D732C204E7572-
+    75 0000004A 73652C20456E67696E-
+    75 00000053 6565722C2065746329-
+    75 0000005C 3A2000             
+    76 0000005F 506C6561736520656E-     sides_prompt db "Please enter the sides of your triangle separated by WS: ", 0
+    76 00000068 746572207468652073-
+    76 00000071 69646573206F662079-
+    76 0000007A 6F757220747269616E-
+    76 00000083 676C65207365706172-
+    76 0000008C 617465642062792057-
+    76 00000095 533A2000           
+    77 00000099 506C6561736520656E-     angle_size_prompt db "Please enter the size in degrees of the angle between those sides: ", 0
+    77 000000A2 746572207468652073-
+    77 000000AB 697A6520696E206465-
+    77 000000B4 6772656573206F6620-
+    77 000000BD 74686520616E676C65-
+    77 000000C6 206265747765656E20-
+    77 000000CF 74686F736520736964-
+    77 000000D8 65733A2000         
+    78                                  
+    79 000000DD 256C6620256C6600        side_input_format db "%lf %lf", 0    
+    80 000000E5 256C6600                degree_input_format db "%lf", 0
+    81                                  
+    82 000000E9 546865206C656E6774-     third_side_format db "The length of the third side is: %lf units.", 0
+    82 000000F2 68206F662074686520-
+    82 000000FB 746869726420736964-
+    82 00000104 652069733A20256C66-
+    82 0000010D 20756E6974732E00   
     83                                  
-    84 00000130 182D4454FB210940        pi dq 3.141592653589793
-    85 00000138 0000000000806640        one_eighty dq 180.0
-    86 00000140 0000000000000040        two dq 2.0
+    84                                  
+    85 00000115 506C6561736520656E-     enjoy_message db "Please enjoy your triangles %s %s.", 0
+    85 0000011E 6A6F7920796F757220-
+    85 00000127 747269616E676C6573-
+    85 00000130 2025732025732E00   
+    86                                  
     87                                  
-    88                                  segment .bss                                                ;Place un-initialized data here.
-    89                                  
-    90                                      align 64                                                    ;Insure that the inext data declaration starts on a 64-byte boundar.
-    91 00000000 <res 00000340>              backuparea resb 832                                         ;Create an array for backup storage having 832 bytes.
-    92 00000340 <res 00000028>              last_name resb 40
-    93 00000368 <res 00000028>              title resb 40
-    94 00000390 <res 00000008>              side_1 resq 1  ; Reserve space for the first side (double type)
-    95 00000398 <res 00000008>              side_2 resq 1  ; Reserve space for the second side (double type)
-    96 000003A0 <res 00000008>              angle resq 1   ; Reserve space for the angle (double type)
-    97 000003A8 <res 00000008>              degree resq 1
-    98 000003B0 <res 00000008>              cos_theta resq 1
-    99 000003B8 <res 00000008>              third_side resq 1
-   100                                     
-   101                                  ;===== Begin executable instructions here =====================================================================================
-   102                                  
-   103                                  segment .text                                               ;Place executable instructions in this segment.
-   104                                  
-   105                                  triangle:                                          ;Entry point.  Execution begins here.
+    88 00000138 182D4454FB210940        pi dq 3.141592653589793
+    89 00000140 0000000000806640        one_eighty dq 180.0
+    90 00000148 0000000000000040        two dq 2.0
+    91                                  
+    92                                  segment .bss                                                ;Place un-initialized data here.
+    93                                  
+    94                                      align 64                                                    ;Insure that the inext data declaration starts on a 64-byte boundar.
+    95 00000000 <res 00000340>              backuparea resb 832                                         ;Create an array for backup storage having 832 bytes.
+    96 00000340 <res 00000028>              last_name resb 40
+    97 00000368 <res 00000028>              title resb 40
+    98 00000390 <res 00000008>              side_1 resq 1  ; Reserve space for the first side (double type)
+    99 00000398 <res 00000008>              side_2 resq 1  ; Reserve space for the second side (double type)
+   100 000003A0 <res 00000008>              angle resq 1   ; Reserve space for the angle (double type)
+   101 000003A8 <res 00000008>              degree resq 1
+   102 000003B0 <res 00000008>              cos_theta resq 1
+   103 000003B8 <res 00000008>              third_side resq 1
+   104                                     
+   105                                  ;===== Begin executable instructions here =====================================================================================
    106                                  
-   107                                  ;=========== Back up all the GPRs whether used in this program or not =========================================================
+   107                                  segment .text                                               ;Place executable instructions in this segment.
    108                                  
-   109 00000000 55                          push       rbp                                              ;Save a copy of the stack base pointer
-   110 00000001 4889E5                      mov        rbp, rsp                                         ;We do this in order to be 100% compatible with C and C++.
-   111 00000004 53                          push       rbx                                              ;Back up rbx
-   112 00000005 51                          push       rcx                                              ;Back up rcx
-   113 00000006 52                          push       rdx                                              ;Back up rdx
-   114 00000007 56                          push       rsi                                              ;Back up rsi
-   115 00000008 57                          push       rdi                                              ;Back up rdi
-   116 00000009 4150                        push       r8                                               ;Back up r8
-   117 0000000B 4151                        push       r9                                               ;Back up r9
-   118 0000000D 4152                        push       r10                                              ;Back up r10
-   119 0000000F 4153                        push       r11                                              ;Back up r11
-   120 00000011 4154                        push       r12                                              ;Back up r12
-   121 00000013 4155                        push       r13                                              ;Back up r13
-   122 00000015 4156                        push       r14                                              ;Back up r14
-   123 00000017 4157                        push       r15                                              ;Back up r15
-   124 00000019 9C                          pushf                                                       ;Back up rflags
-   125                                  
-   126                                      ; Promt for last name
-   127 0000001A B800000000                  mov rax, 0
-   128 0000001F 48BF-                       mov rdi, last_name_prompt
-   128 00000021 [0000000000000000] 
-   129 00000029 E8(00000000)                call printf
-   130                                          
-   131                                  
-   132                                      ; Get the last name from user
-   133                                    
-   134 0000002E 48BF-                       mov rdi, last_name
-   134 00000030 [4003000000000000] 
-   135 00000038 BE28000000                  mov rsi, last_name_prompt_size
-   136 0000003D 488B1425[00000000]          mov rdx, [stdin]
-   137 00000045 E8(00000000)                call fgets
-   138                                  
-   139                                      ; remove \n
-   140 0000004A B800000000                  mov rax, 0
-   141 0000004F 48BF-                       mov rdi, last_name
-   141 00000051 [4003000000000000] 
-   142 00000059 BE27000000                  mov rsi, 39
-   143 0000005E E8(00000000)                call strlen
-   144 00000063 C680[3F030000]00            mov byte[last_name + rax -1], 0 ;replace last character with null byte
-   145                                  
-   146                                      ; Promt for title
-   147 0000006A B800000000                  mov rax, 0
-   148 0000006F 48BF-                       mov rdi, title_prompt
-   148 00000071 [1E00000000000000] 
-   149 00000079 E8(00000000)                call printf
-   150                                          
-   151                                  
-   152                                      ; Get the title from user
-   153 0000007E 48BF-                       mov rdi, title
-   153 00000080 [6803000000000000] 
-   154 00000088 BE28000000                  mov rsi, title_prompt_size
-   155 0000008D 488B1425[00000000]          mov rdx, [stdin]
-   156 00000095 E8(00000000)                call fgets
-   157                                  
-   158                                      ; remove \n
-   159 0000009A B800000000                  mov rax, 0
-   160 0000009F 48BF-                       mov rdi, title
-   160 000000A1 [6803000000000000] 
-   161 000000A9 BE27000000                  mov rsi, 39
-   162 000000AE E8(00000000)                call strlen
-   163 000000B3 C680[67030000]00            mov byte[title + rax -1], 0
-   164                                  
-   165                                  
-   166                                    ; Prompt for sides input
-   167 000000BA 48BF-                       mov rdi, sides_prompt
-   167 000000BC [5700000000000000] 
-   168 000000C4 E8(00000000)                call printf
+   109                                  triangle:                                          ;Entry point.  Execution begins here.
+   110                                  
+   111                                  ;=========== Back up all the GPRs whether used in this program or not =========================================================
+   112                                  
+   113 00000000 55                          push       rbp                                              ;Save a copy of the stack base pointer
+   114 00000001 4889E5                      mov        rbp, rsp                                         ;We do this in order to be 100% compatible with C and C++.
+   115 00000004 53                          push       rbx                                              ;Back up rbx
+   116 00000005 51                          push       rcx                                              ;Back up rcx
+   117 00000006 52                          push       rdx                                              ;Back up rdx
+   118 00000007 56                          push       rsi                                              ;Back up rsi
+   119 00000008 57                          push       rdi                                              ;Back up rdi
+   120 00000009 4150                        push       r8                                               ;Back up r8
+   121 0000000B 4151                        push       r9                                               ;Back up r9
+   122 0000000D 4152                        push       r10                                              ;Back up r10
+   123 0000000F 4153                        push       r11                                              ;Back up r11
+   124 00000011 4154                        push       r12                                              ;Back up r12
+   125 00000013 4155                        push       r13                                              ;Back up r13
+   126 00000015 4156                        push       r14                                              ;Back up r14
+   127 00000017 4157                        push       r15                                              ;Back up r15
+   128 00000019 9C                          pushf                                                       ;Back up rflags
+   129                                  
+   130                                      ; Promt for last name
+   131 0000001A B800000000                  mov rax, 0
+   132 0000001F 48BF-                       mov rdi, last_name_prompt
+   132 00000021 [0800000000000000] 
+   133 00000029 E8(00000000)                call printf
+   134                                          
+   135                                  
+   136                                      ; Get the last name from user
+   137                                    
+   138 0000002E 48BF-                       mov rdi, last_name
+   138 00000030 [4003000000000000] 
+   139 00000038 BE28000000                  mov rsi, last_name_prompt_size
+   140 0000003D 488B1425[00000000]          mov rdx, [stdin]
+   141 00000045 E8(00000000)                call fgets
+   142                                  
+   143                                      ; remove \n
+   144 0000004A B800000000                  mov rax, 0
+   145 0000004F 48BF-                       mov rdi, last_name
+   145 00000051 [4003000000000000] 
+   146 00000059 BE27000000                  mov rsi, 39
+   147 0000005E E8(00000000)                call strlen
+   148 00000063 C680[3F030000]00            mov byte[last_name + rax -1], 0 ;replace last character with null byte
+   149                                  
+   150                                      ; Promt for title
+   151 0000006A B800000000                  mov rax, 0
+   152 0000006F 48BF-                       mov rdi, title_prompt
+   152 00000071 [2600000000000000] 
+   153 00000079 E8(00000000)                call printf
+   154                                          
+   155                                  
+   156                                      ; Get the title from user
+   157 0000007E 48BF-                       mov rdi, title
+   157 00000080 [6803000000000000] 
+   158 00000088 BE28000000                  mov rsi, title_prompt_size
+   159 0000008D 488B1425[00000000]          mov rdx, [stdin]
+   160 00000095 E8(00000000)                call fgets
+   161                                  
+   162                                      ; remove \n
+   163 0000009A B800000000                  mov rax, 0
+   164 0000009F 48BF-                       mov rdi, title
+   164 000000A1 [6803000000000000] 
+   165 000000A9 BE27000000                  mov rsi, 39
+   166 000000AE E8(00000000)                call strlen
+   167 000000B3 C680[67030000]00            mov byte[title + rax -1], 0
+   168                                  
    169                                  
-   170                                      ; Read two floating-point numbers (sides of the triangle)
-   171                                     ; Read two floating-point numbers (sides of the triangle)
-   172 000000C9 4883EC10                    sub rsp, 16             ; Allocate space for two floats (aligned by 16 bytes)
-   173 000000CD 48BF-                       mov rdi, side_input_format  ; Format string for reading two doubles
-   173 000000CF [D500000000000000] 
-   174 000000D7 48BE-                       mov rsi, side_1        ; Address for the first side
-   174 000000D9 [9003000000000000] 
-   175 000000E1 48BA-                       mov rdx, side_2        ; Address for the second side
-   175 000000E3 [9803000000000000] 
-   176 000000EB E8(00000000)                call scanf
-   177                                  
-   178                                      ; Move the input values into xmm registers
-   179 000000F0 F2440F103425-               movsd xmm14, [side_1]   ; Move first side into xmm14
-   179 000000F6 [90030000]         
-   180 000000FA F2440F103C25-               movsd xmm15, [side_2]   ; Move second side into xmm15
-   180 00000100 [98030000]         
-   181 00000104 4883C410                    add rsp, 16
-   182                                  
-   183                                  ;=========== Prompt for angle input ================================================================================
-   184                                  
-   185                                      ; Prompt for angle input
-   186 00000108 48BF-                       mov rdi, angle_size_prompt      ; Load address of the prompt message into rdi
-   186 0000010A [9100000000000000] 
-   187 00000112 E8(00000000)                call printf                    ; Call printf to display the prompt
+   170                                    ; Prompt for sides input
+   171 000000BA 48BF-                       mov rdi, sides_prompt
+   171 000000BC [5F00000000000000] 
+   172 000000C4 E8(00000000)                call printf
+   173                                  
+   174                                      ; Read two floating-point numbers (sides of the triangle)
+   175                                     ; Read two floating-point numbers (sides of the triangle)
+   176 000000C9 4883EC10                    sub rsp, 16             ; Allocate space for two floats (aligned by 16 bytes)
+   177 000000CD 48BF-                       mov rdi, side_input_format  ; Format string for reading two doubles
+   177 000000CF [DD00000000000000] 
+   178 000000D7 48BE-                       mov rsi, side_1        ; Address for the first side
+   178 000000D9 [9003000000000000] 
+   179 000000E1 48BA-                       mov rdx, side_2        ; Address for the second side
+   179 000000E3 [9803000000000000] 
+   180 000000EB E8(00000000)                call scanf
+   181                                  
+   182                                      ; Move the input values into xmm registers
+   183 000000F0 F2440F103425-               movsd xmm14, [side_1]   ; Move first side into xmm14
+   183 000000F6 [90030000]         
+   184 000000FA F2440F103C25-               movsd xmm15, [side_2]   ; Move second side into xmm15
+   184 00000100 [98030000]         
+   185 00000104 4883C410                    add rsp, 16
+   186                                  
+   187                                  ;=========== Prompt for angle input ================================================================================
    188                                  
-   189                                      ; Allocate space for the angle input (double type, 8 bytes)
-   190 00000117 4883EC10                    sub rsp, 16                     ; Allocate space on the stack for the angle (double)
-   191                                  
-   192                                      ; Set up the format for scanf to read a floating-point value (%lf)
-   193 0000011B 48BF-                       mov rdi, degree_input_format   ; Load format string for reading a double
-   193 0000011D [DD00000000000000] 
-   194 00000125 48BE-                       mov rsi, degree                ; Load address of the 'degree' variable (where input will be stored)
-   194 00000127 [A803000000000000] 
-   195 0000012F E8(00000000)                call scanf                     ; Call scanf to read the angle input
-   196                                  
-   197                                      ; Move the input value (angle) into xmm13 register
-   198 00000134 F2440F102C25-               movsd xmm13, [degree]          ; Move the angle value into xmm13 register (SSE register for double precision)
-   198 0000013A [A8030000]         
-   199                                  
+   189                                      ; Prompt for angle input
+   190 00000108 48BF-                       mov rdi, angle_size_prompt      ; Load address of the prompt message into rdi
+   190 0000010A [9900000000000000] 
+   191 00000112 E8(00000000)                call printf                    ; Call printf to display the prompt
+   192                                  
+   193                                      ; Allocate space for the angle input (double type, 8 bytes)
+   194 00000117 4883EC10                    sub rsp, 16                     ; Allocate space on the stack for the angle (double)
+   195                                  
+   196                                      ; Set up the format for scanf to read a floating-point value (%lf)
+   197 0000011B 48BF-                       mov rdi, degree_input_format   ; Load format string for reading a double
+   197 0000011D [E500000000000000] 
+   198 00000125 48BE-                       mov rsi, degree                ; Load address of the 'degree' variable (where input will be stored)
+   198 00000127 [A803000000000000] 
+   199 0000012F E8(00000000)                call scanf                     ; Call scanf to read the angle input
    200                                  
-   201                                      ; Clean up the stack after reading the input
-   202 0000013E 4883C410                    add rsp, 16                     ; Restore the stack (8 bytes for the angle input)
+   201                                      ; Move the input value (angle) into xmm13 register
+   202 00000134 F2440F102C25-               movsd xmm13, [degree]          ; Move the angle value into xmm13 register (SSE register for double precision)
+   202 0000013A [A8030000]         
    203                                  
    204                                  
-   205                                      ; convert degree to radians
-   206 00000142 F2440F102C25-               movsd xmm13, [degree]
-   206 00000148 [A8030000]         
+   205                                      ; Clean up the stack after reading the input
+   206 0000013E 4883C410                    add rsp, 16                     ; Restore the stack (8 bytes for the angle input)
    207                                  
-   208 0000014C F2440F592C25-               mulsd xmm13, [pi]
-   208 00000152 [30010000]         
-   209 00000156 F2440F5E2C25-               divsd xmm13, [one_eighty]
-   209 0000015C [38010000]         
-   210 00000160 F2440F112C25-               movsd [degree], xmm13
-   210 00000166 [A8030000]         
+   208                                  
+   209                                      ; convert degree to radians
+   210 00000142 F2440F102C25-               movsd xmm13, [degree]
+   210 00000148 [A8030000]         
    211                                  
-   212                                      ;computes cos(0)
-   213 0000016A B801000000                  mov rax, 1
-   214 0000016F F20F100425-                 movsd xmm0, [degree]
-   214 00000174 [A8030000]         
-   215 00000178 E8(00000000)                call cos
-   216 0000017D F20F110425-                 movsd [cos_theta], xmm0
-   216 00000182 [B0030000]         
-   217                                  
-   218                                      ;computes 2ab*cos(0)
-   219 00000186 F2440F103425-               movsd xmm14, [two]
-   219 0000018C [40010000]         
-   220 00000190 F2440F593425-               mulsd xmm14, [side_1]
-   220 00000196 [90030000]         
-   221 0000019A F2440F593425-               mulsd xmm14, [side_2]
-   221 000001A0 [98030000]         
-   222 000001A4 F2440F593425-               mulsd xmm14, [cos_theta]
-   222 000001AA [B0030000]         
-   223                                  
-   224                                  
-   225                                      ;computing c^2 = a^2 + b^2
-   226 000001AE F2440F102C25-               movsd xmm13, [side_1]
-   226 000001B4 [90030000]         
-   227 000001B8 F2440F102425-               movsd xmm12, [side_2]
-   227 000001BE [98030000]         
-   228 000001C2 F2440F592C25-               mulsd xmm13, [side_1]
-   228 000001C8 [90030000]         
-   229 000001CC F2440F592425-               mulsd xmm12, [side_2]
-   229 000001D2 [98030000]         
-   230 000001D6 F2450F58E5                  addsd xmm12, xmm13
-   231 000001DB F2450F5CE6                  subsd xmm12, xmm14
-   232 000001E0 F2450F51E4                  sqrtsd xmm12, xmm12
-   233                                   
-   234                                    ; Print the length of the third side
-   235 000001E5 B801000000                  mov rax, 1
-   236 000001EA 48BF-                       mov rdi, third_side_format
-   236 000001EC [E100000000000000] 
-   237 000001F4 F2410F10C4                  movsd xmm0, xmm12
-   238 000001F9 E8(00000000)                call printf
-   239                                  
-   240                                    
-   241                                  ; Print the "Please enjoy your triangles" message
-   242 000001FE B800000000                  mov rax, 0
-   243 00000203 48BF-                       mov rdi, enjoy_message
-   243 00000205 [0D01000000000000] 
-   244 0000020D 48BE-                       mov rsi, title
-   244 0000020F [6803000000000000] 
-   245 00000217 48BA-                       mov rdx, last_name
-   245 00000219 [4003000000000000] 
-   246 00000221 E8(00000000)                call printf
-   247                                  
-   248 00000226 F2410F10C4                  movsd xmm0, xmm12
-   249                                      ;Restore the original values to the GPRs
-   250 0000022B 9D                          popf                                                        ;Restore rflags
-   251 0000022C 415F                        pop        r15                                              ;Restore r15
-   252 0000022E 415E                        pop        r14                                              ;Restore r14
-   253 00000230 415D                        pop        r13                                              ;Restore r13
-   254 00000232 415C                        pop        r12                                              ;Restore r12
-   255 00000234 415B                        pop        r11                                              ;Restore r11
-   256 00000236 415A                        pop        r10                                              ;Restore r10
-   257 00000238 4159                        pop        r9                                               ;Restore r9
-   258 0000023A 4158                        pop        r8                                               ;Restore r8
-   259 0000023C 5F                          pop        rdi                                              ;Restore rdi
-   260 0000023D 5E                          pop        rsi                                              ;Restore rsi
-   261 0000023E 5A                          pop        rdx                                              ;Restore rdx
-   262 0000023F 59                          pop        rcx                                              ;Restore rcx
-   263 00000240 5B                          pop        rbx                                              ;Restore rbx
-   264 00000241 5D                          pop        rbp                                              ;Restore rbp
-   265                                  
-   266 00000242 C3                      ret                                                         ;No parameter with this instruction.  This instruction will pop 8 bytes from
-   267                                                                                              ;the integer stack, and jump to the address found on the stack.
-   268                                  ;========== End of program fp-io.asm ======================================================================================================================================
-   269                                  ;========1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3=========4=========5=========6=========7**
-=======
-    48                                  extern fgets
-    49                                  
-    50                                  extern stdin
-    51                                  
-    52                                  extern printf                                               ;External C++ function for writing to standard output device
-    53                                  
-    54                                  extern scanf                                                ;External C++ function for reading from the standard input device
-    55                                  
-    56                                  global triangle                                    ;This makes floating_point_io callable by functions outside of this file.
-    57                                  
-    58                                  segment .data                                               ;Place initialized data here
-    59 00000000 0000000000003640        place_holder  dq 22.0
-    60                                  
-    61                                  segment .bss                                                ;Place un-initialized data here.
-    62                                  
-    63                                  align 64                                                    ;Insure that the inext data declaration starts on a 64-byte boundar.
-    64 00000000 <res 00000340>          backuparea resb 832                                         ;Create an array for backup storage having 832 bytes.
-    65                                  
-    66                                  ;===== Begin executable instructions here =====================================================================================
-    67                                  
-    68                                  segment .text                                               ;Place executable instructions in this segment.
-    69                                  
-    70                                  triangle:                                          ;Entry point.  Execution begins here.
-    71                                  
-    72                                  ;=========== Back up all the GPRs whether used in this program or not =========================================================
-    73                                  
-    74 00000000 55                      push       rbp                                              ;Save a copy of the stack base pointer
-    75 00000001 4889E5                  mov        rbp, rsp                                         ;We do this in order to be 100% compatible with C and C++.
-    76 00000004 53                      push       rbx                                              ;Back up rbx
-    77 00000005 51                      push       rcx                                              ;Back up rcx
-    78 00000006 52                      push       rdx                                              ;Back up rdx
-    79 00000007 56                      push       rsi                                              ;Back up rsi
-    80 00000008 57                      push       rdi                                              ;Back up rdi
-    81 00000009 4150                    push       r8                                               ;Back up r8
-    82 0000000B 4151                    push       r9                                               ;Back up r9
-    83 0000000D 4152                    push       r10                                              ;Back up r10
-    84 0000000F 4153                    push       r11                                              ;Back up r11
-    85 00000011 4154                    push       r12                                              ;Back up r12
-    86 00000013 4155                    push       r13                                              ;Back up r13
-    87 00000015 4156                    push       r14                                              ;Back up r14
-    88 00000017 4157                    push       r15                                              ;Back up r15
-    89 00000019 9C                      pushf                                                       ;Back up rflags
-    90                                  
-    91                                  
-    92                                  
-    93 0000001A F20F100425-             movsd xmm0, [place_holder]
-    93 0000001F [00000000]         
-    94                                  ;Restore the original values to the GPRs
-    95 00000023 9D                      popf                                                        ;Restore rflags
-    96 00000024 415F                    pop        r15                                              ;Restore r15
-    97 00000026 415E                    pop        r14                                              ;Restore r14
-    98 00000028 415D                    pop        r13                                              ;Restore r13
-    99 0000002A 415C                    pop        r12                                              ;Restore r12
-   100 0000002C 415B                    pop        r11                                              ;Restore r11
-   101 0000002E 415A                    pop        r10                                              ;Restore r10
-   102 00000030 4159                    pop        r9                                               ;Restore r9
-   103 00000032 4158                    pop        r8                                               ;Restore r8
-   104 00000034 5F                      pop        rdi                                              ;Restore rdi
-   105 00000035 5E                      pop        rsi                                              ;Restore rsi
-   106 00000036 5A                      pop        rdx                                              ;Restore rdx
-   107 00000037 59                      pop        rcx                                              ;Restore rcx
-   108 00000038 5B                      pop        rbx                                              ;Restore rbx
-   109 00000039 5D                      pop        rbp                                              ;Restore rbp
-   110                                  
-   111 0000003A C3                      ret                                                         ;No parameter with this instruction.  This instruction will pop 8 bytes from
-   112                                                                                              ;the integer stack, and jump to the address found on the stack.
-   113                                  ;========== End of program fp-io.asm ======================================================================================================================================
-   114                                  ;========1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3=========4=========5=========6=========7**
->>>>>>> 6c7c03e48c532ec8e343911ef3b48ce7153a940e
+   212 0000014C F2440F592C25-               mulsd xmm13, [pi]
+   212 00000152 [38010000]         
+   213 00000156 F2440F5E2C25-               divsd xmm13, [one_eighty]
+   213 0000015C [40010000]         
+   214 00000160 F2440F112C25-               movsd [degree], xmm13
+   214 00000166 [A8030000]         
+   215                                  
+   216                                      ;computes cos(0)
+   217 0000016A B801000000                  mov rax, 1
+   218 0000016F F20F100425-                 movsd xmm0, [degree]
+   218 00000174 [A8030000]         
+   219 00000178 E8(00000000)                call cos
+   220 0000017D F20F110425-                 movsd [cos_theta], xmm0
+   220 00000182 [B0030000]         
+   221                                  
+   222                                      ;computes 2ab*cos(0)
+   223 00000186 F2440F103425-               movsd xmm14, [two]
+   223 0000018C [48010000]         
+   224 00000190 F2440F593425-               mulsd xmm14, [side_1]
+   224 00000196 [90030000]         
+   225 0000019A F2440F593425-               mulsd xmm14, [side_2]
+   225 000001A0 [98030000]         
+   226 000001A4 F2440F593425-               mulsd xmm14, [cos_theta]
+   226 000001AA [B0030000]         
+   227                                  
+   228                                  
+   229                                      ;computing c^2 = a^2 + b^2
+   230 000001AE F2440F102C25-               movsd xmm13, [side_1]
+   230 000001B4 [90030000]         
+   231 000001B8 F2440F102425-               movsd xmm12, [side_2]
+   231 000001BE [98030000]         
+   232 000001C2 F2440F592C25-               mulsd xmm13, [side_1]
+   232 000001C8 [90030000]         
+   233 000001CC F2440F592425-               mulsd xmm12, [side_2]
+   233 000001D2 [98030000]         
+   234 000001D6 F2450F58E5                  addsd xmm12, xmm13
+   235 000001DB F2450F5CE6                  subsd xmm12, xmm14
+   236 000001E0 F2450F51E4                  sqrtsd xmm12, xmm12
+   237                                   
+   238                                    ; Print the length of the third side
+   239 000001E5 B801000000                  mov rax, 1
+   240 000001EA 48BF-                       mov rdi, third_side_format
+   240 000001EC [E900000000000000] 
+   241 000001F4 F2410F10C4                  movsd xmm0, xmm12
+   242 000001F9 E8(00000000)                call printf
+   243                                  
+   244                                    
+   245                                  ; Print the "Please enjoy your triangles" message
+   246 000001FE B800000000                  mov rax, 0
+   247 00000203 48BF-                       mov rdi, enjoy_message
+   247 00000205 [1501000000000000] 
+   248 0000020D 48BE-                       mov rsi, title
+   248 0000020F [6803000000000000] 
+   249 00000217 48BA-                       mov rdx, last_name
+   249 00000219 [4003000000000000] 
+   250 00000221 E8(00000000)                call printf
+   251                                  
+   252 00000226 F2410F10C4                  movsd xmm0, xmm12
+   253                                      ;Restore the original values to the GPRs
+   254 0000022B 9D                          popf                                                        ;Restore rflags
+   255 0000022C 415F                        pop        r15                                              ;Restore r15
+   256 0000022E 415E                        pop        r14                                              ;Restore r14
+   257 00000230 415D                        pop        r13                                              ;Restore r13
+   258 00000232 415C                        pop        r12                                              ;Restore r12
+   259 00000234 415B                        pop        r11                                              ;Restore r11
+   260 00000236 415A                        pop        r10                                              ;Restore r10
+   261 00000238 4159                        pop        r9                                               ;Restore r9
+   262 0000023A 4158                        pop        r8                                               ;Restore r8
+   263 0000023C 5F                          pop        rdi                                              ;Restore rdi
+   264 0000023D 5E                          pop        rsi                                              ;Restore rsi
+   265 0000023E 5A                          pop        rdx                                              ;Restore rdx
+   266 0000023F 59                          pop        rcx                                              ;Restore rcx
+   267 00000240 5B                          pop        rbx                                              ;Restore rbx
+   268 00000241 5D                          pop        rbp                                              ;Restore rbp
+   269                                  
+   270 00000242 C3                      ret                                                         ;No parameter with this instruction.  This instruction will pop 8 bytes from
+   271                                                                                              ;the integer stack, and jump to the address found on the stack.
+   272                                  ;========== End of program fp-io.asm ======================================================================================================================================
+   273                                  ;========1=========2=========3=========4=========5=========6=========7=========8=========9=========0=========1=========2=========3=========4=========5=========6=========7**
