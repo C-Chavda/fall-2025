@@ -87,7 +87,8 @@ int main(){
     double count = 0;
     printf("\nIf errors are discovered please report them to Chandresh Chavda at chav349@csu.fullerton.edu for a quick fix.\n");
     count = triangle();
-    printf("\nThe main function received this number %8lf and plans to keep it until needed. An integer zero will be returned to the operating system. Bye.\n", count);
+    printf("\nThe main function received this number %8lf and plans to keep it until needed. An integer zero will be returned to the operating system. Bye.", count);
+    printf("\n");
     return 0;
 
 }//End of main

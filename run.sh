@@ -2,10 +2,10 @@
 # *************************************************************************************************************************
 # Program name: "Triangle"                                                                                         *
 # //  Author name: Chandresh Chavda                                                                                             *
-//  Author email: chav349@csu.fullerton.edu                                                                                   *
-//  CWID: 885158899                                                                                                           *
-//  Class: 240-11 Section 11                                                                                                  *
-//  Date program modified: 2025-Feb-07                                                                                                   *
+# //  Author email: chav349@csu.fullerton.edu                                                                                   *
+# //  CWID: 885158899                                                                                                           *
+# //  Class: 240-11 Section 11                                                                                                  *
+# //  Date program modified: 2025-Feb-07                                                                                                   *
 # Program information:                                                                                                      *
 # This file is the script file that accompanies the "Triangle" program.                                             *
 # It prepares the necessary files for execution in normal mode.                                               *
@@ -27,22 +27,17 @@
 rm -f *.o
 rm -f *.out
 
-echo "This is program <Triangle>"
 
 # Step 1: Assemble the module triangle.asm into triangle.o
-echo "Assemble the module triangle.asm"
+
 nasm -f elf64 -l triangle.lis -o triangle.o triangle.asm
 
 # Step 2: Compile the C module geometry.c into geometry.o
-echo "Compile the C module geometry.c"
 gcc -c -m64 -Wall -o geometry.o geometry.c -no-pie -std=c2x
 
-
 # Step 3: Link the two object files into triangle.out
-echo "Link the two object files already created"
 gcc -m64 -o triangle.out geometry.o triangle.o -no-pie -std=c2x -lm   # Link math library with -lm
 
 # Step 4: Run the program Triangle
-echo "Run the program Triangle"
 chmod +x triangle.out
 ./triangle.out

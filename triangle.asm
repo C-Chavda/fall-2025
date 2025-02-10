@@ -71,18 +71,18 @@ place_holder  dq 22.0
 
   ;  place_holder dq 22.0
 
-last_name_prompt db "Please enter your last name: ", 0
-title_prompt db "Please enter your title (Mr, Ms, Nurse, Engineer, etc): ", 0
-sides_prompt db "Please enter the sides of your triangle separated by WS: ", 0
-angle_size_prompt db "Please enter the size in degrees of the angle between those sides: ", 0
+last_name_prompt db 10,"Please enter your last name: ", 0
+title_prompt db 10,"Please enter your title (Mr, Ms, Nurse, Engineer, etc): ", 0
+sides_prompt db 10,"Please enter the sides of your triangle separated by WS: ", 0
+angle_size_prompt db 10,"Please enter the size in degrees of the angle between those sides: ", 0
 
-side_input_format db "%lf %lf", 0    
-degree_input_format db "%lf", 0
+side_input_format db 10,"%lf %lf", 0    
+degree_input_format db 10,"%lf", 0
 
-third_side_format db "The length of the third side is: %lf units.", 0
+third_side_format db "The length of the third side is: %lf units.", 10, 0
 
 
-enjoy_message db "Please enjoy your triangles %s %s.", 0
+enjoy_message db 10,"Please enjoy your triangles %s %s.", 10, 0
 
 
 pi dq 3.141592653589793
@@ -239,7 +239,7 @@ triangle:                                          ;Entry point.  Execution begi
     mov rax, 1
     mov rdi, third_side_format
     movsd xmm0, xmm12
-    call printf
+    call printf,
 
   
 ; Print the "Please enjoy your triangles" message
